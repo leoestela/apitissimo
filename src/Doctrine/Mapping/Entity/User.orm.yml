@@ -1,0 +1,29 @@
+App\Entity\User:
+  type: entity
+  table: user
+
+  id:
+    id:
+      type: int
+
+  fields:
+    email:
+      type: string
+      nullable: false
+    phone:
+      type: string
+      nullable: false
+    address:
+      type: string
+      nullable: false
+    createdAt:
+      type: datetime
+      nullable: false
+    updatedAt:
+      type: datetime
+      nullable: false
+
+  lifecycleCallbacks:
+    preUpdate: [markAsUpdated]
+
+
