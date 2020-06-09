@@ -20,7 +20,7 @@ class UserRepository extends ServiceEntityRepository
      * @param string
      * @return null|object
      */
-    public function finOneByEmail($email): ?User
+    public function findOneByEmail($email): ?User
     {
         $entityManager = $this->getEntityManager();
 

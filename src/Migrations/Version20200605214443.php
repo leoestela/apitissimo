@@ -22,8 +22,8 @@ final class Version20200605214443 extends AbstractMigration
                 email VARCHAR(200) NOT NULL ,
                 phone VARCHAR(50) NOT NULL ,
                 address VARCHAR(500) NOT NULL ,
-                createdAt DATETIME NOT NULL ,
-                updatedAt DATETIME NOT NULL
+                created_at DATETIME NOT NULL ,
+                updated_at DATETIME NOT NULL
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ENGINE = InnoDB
         ');
     }

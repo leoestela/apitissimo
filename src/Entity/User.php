@@ -4,126 +4,46 @@
 namespace App\Entity;
 
 
+use DateTime;
+
 class User
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $id;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $email;
 
-    /**
-     * @var string
-     */
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $phone;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $address;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime */
     protected $createdAt;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var DateTime */
     protected $updatedAt;
 
-    /**
-     * User constructor.
-     * @param int $id
-     * @param string $email
-     * @param string $phone
-     * @param string $address
-     */
-    public function __construct(int $id, string $email, string $phone, string $address)
+
+    public function __construct(string $email, string $phone, string $address)
     {
-        $this->id = $id;
         $this->email = $email;
         $this->phone = $phone;
         $this->address = $address;
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
         $this->markAsUpdated();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPhone(): string
-    {
-        return $this->phone;
-    }
-
-    /**
-     * @param string $phone
-     */
-    public function setPhone(string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param string $address
-     */
-    public function setAddress(string $address): void
-    {
-        $this->address = $address;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt(): \DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function markAsUpdated(): void
-    {
-        $this->updatedAt =new \DateTime();
     }
 
     public function setEmail(string $email): self
@@ -133,17 +53,38 @@ class User
         return $this;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function getPhone(): string
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return $this->phone;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    public function setPhone(string $phone): void
     {
-        $this->updatedAt = $updatedAt;
+        $this->phone = $phone;
+    }
 
-        return $this;
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): void
+    {
+        $this->address = $address;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function markAsUpdated(): void
+    {
+        $this->updatedAt =new DateTime();
     }
 }

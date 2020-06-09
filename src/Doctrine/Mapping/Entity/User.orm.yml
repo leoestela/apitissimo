@@ -4,7 +4,9 @@ App\Entity\User:
 
   id:
     id:
-      type: int
+      type: integer
+      generator:
+        strategy: AUTO
 
   fields:
     email:
