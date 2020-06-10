@@ -67,18 +67,6 @@ class UserService
         }
     }
 
-    private function allRequiredFieldsArePresent(string $email, string $phone, string $address):bool
-    {
-        $allRequiredFieldArePresent = true;
-
-        if (null == $email || null == $phone || null == $address)
-        {
-            $allRequiredFieldArePresent = false;
-        }
-
-        return $allRequiredFieldArePresent;
-    }
-
     private function isValidEmail(string $email):bool
     {
         return (false !== filter_var($email, FILTER_VALIDATE_EMAIL));
