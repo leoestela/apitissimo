@@ -128,7 +128,7 @@ class UserServiceTest extends TestCase
     }
 
     /** @throws */
-    public function testShouldCreatUserIfEmailNotExists()
+    public function testShouldCreateUserIfEmailNotExists()
     {
         $this->userRepositoryProphecy->findOneByEmail(self::EMAIL)->shouldBeCalledOnce()->willReturn(null);
 

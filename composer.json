@@ -12,9 +12,12 @@
         "symfony/framework-bundle": "4.2.*",
         "symfony/maker-bundle": "^1.19",
         "symfony/orm-pack": "^1.0",
+        "symfony/proxy-manager-bridge": "4.2.*",
         "symfony/yaml": "4.2.*"
     },
     "require-dev": {
+        "doctrine/data-fixtures": "^1.4",
+        "liip/test-fixtures-bundle": "^1.0.0",
         "symfony/phpunit-bridge": "^5.1"
     },
     "config": {

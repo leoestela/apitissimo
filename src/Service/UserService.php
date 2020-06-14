@@ -36,10 +36,7 @@ class UserService
         $this->requiredFieldInformed($phone);
         $this->requiredFieldInformed($address);
 
-        if (!$this->isValidEmail($email))
-        {
-            throw new Exception('Invalid e-mail', 100);
-        }
+        $this->isValidEmail($email);
 
         $user = $this->userRepository->findOneByEmail($email);
 
@@ -67,9 +64,16 @@ class UserService
         }
     }
 
-    private function isValidEmail(string $email):bool
+    /**
+     * @param string $email
+     * @throws Exception
+     */
+    private function isValidEmail(string $email)
     {
-        return (false !== filter_var($email, FILTER_VALIDATE_EMAIL));
+        if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            throw new Exception('Invalid e-mail', 100);
+        }
     }
 
     private function saveUser(User $user)
