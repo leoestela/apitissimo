@@ -20,9 +20,10 @@ class Category
     /** @var DateTime */
     private $createdAt;
 
-    public function __construct(string $name)
+    public function __construct(string $name, ?string $description)
     {
         $this->name = $name;
+        $this->description = $description;
         $this->createdAt = new DateTime();
     }
 

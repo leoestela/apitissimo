@@ -5,13 +5,10 @@ namespace App\Tests\Functional\Service;
 
 use App\DataFixtures\UserFixtures;
 use App\Entity\User;
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Loader;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ActualizeUserTest extends WebTestCase
+class ActualizeUserTest extends FunctionalWebTestCase
 {
     private const EMAIL = 'leoestela@hotmail.com';
     private const PHONE = '971100309';
@@ -20,26 +17,12 @@ class ActualizeUserTest extends WebTestCase
     /** @var User */
     private $user;
 
-    /** @var ORMExecutor */
-    private $executor;
-
     /** @throws Exception */
     public function setUp()
     {
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        $container = $kernel->getContainer();
-
-        $entityManager = $container->get('doctrine')->getManager();
-
-        $purger = new ORMPurger();
-
-        $this->executor = new ORMExecutor($entityManager, $purger);
-
-        $this->user = $container->get('user_service')->actualizeUser(self::EMAIL, self::PHONE, self::ADDRESS);
-
         parent::setUp();
+
+        $this->user = static::$container->get('user_service')->actualizeUser(self::EMAIL, self::PHONE, self::ADDRESS);
     }
 
     public function testActualizeNonExistingUserCreatesUser()
@@ -49,10 +32,7 @@ class ActualizeUserTest extends WebTestCase
 
     public function testActualizeExistingUserModifiesUser()
     {
-        $loader = new Loader();
-        $loader->addFixture(new UserFixtures());
-
-        $this->executor->execute($loader->getFixtures());
+        $this->loadFixtures(new UserFixtures());
 
         $this->usersAreEquals();
     }
@@ -67,6 +47,6 @@ class ActualizeUserTest extends WebTestCase
     /** @throws Exception */
     public function tearDown()
     {
-        $this->executor->purge();
+        $this->purge();
     }
 }
