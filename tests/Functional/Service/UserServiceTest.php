@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
-class ActualizeUserTest extends FunctionalWebTestCase
+class UserServiceTest extends FunctionalWebTestCase
 {
     private const EMAIL = 'leoestela@hotmail.com';
     private const PHONE = '971100309';

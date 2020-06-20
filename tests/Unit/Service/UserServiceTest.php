@@ -24,44 +24,32 @@ class UserServiceTest extends TestCase
     /**  @var ObjectProphecy|User */
     private $userProphecy;
 
-    /** @var User */
-    private $user;
-
     /**  @var ObjectProphecy|ManagerRegistry */
     private $managerRegistryProphecy;
-
-    /** @var ManagerRegistry */
-    private $managerRegistry;
 
     /**  @var ObjectProphecy|ObjectManager */
     private $entityManagerProphecy;
 
-    /** @var ObjectManager */
-    private $entityManager;
-
     /** @var ObjectProphecy|UserRepository */
     private $userRepositoryProphecy;
-
-    /** @var UserRepository */
-    private $userRepository;
 
 
     public function setUp()
     {
         $this->userProphecy = $this->prophesize(User::class);
-        $this->user = $this->userProphecy->reveal();
+        $user = $this->userProphecy->reveal();
 
         $this->managerRegistryProphecy = $this->prophesize(ManagerRegistry::class);
-        $this->managerRegistry = $this->managerRegistryProphecy->reveal();
+        $managerRegistry = $this->managerRegistryProphecy->reveal();
 
         $this->entityManagerProphecy = $this->prophesize(ObjectManager::class);
         $this->entityManagerProphecy = $this->entityManagerProphecy->willBeConstructedWith([User::class]);
-        $this->entityManager = $this->entityManagerProphecy->reveal();
+        $entityManager = $this->entityManagerProphecy->reveal();
 
         $this->userRepositoryProphecy = $this->prophesize(UserRepository::class);
-        $this->userRepository = $this->userRepositoryProphecy->reveal();
+        $userRepository = $this->userRepositoryProphecy->reveal();
 
-        $this->userService = new UserService($this->managerRegistry, $this->userRepository);
+        $this->userService = new UserService($managerRegistry, $userRepository);
     }
 
     public function aExceptionIsExpected()

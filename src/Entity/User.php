@@ -5,6 +5,7 @@ namespace App\Entity;
 
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 
 class User
 {
@@ -25,6 +26,9 @@ class User
 
     /** @var DateTime */
     protected $updatedAt;
+
+    /** @var null|Collection|BudgetRequest[] */
+    protected $budgetRequests = null;
 
 
     public function __construct(string $email, string $phone, string $address)
@@ -86,5 +90,10 @@ class User
     public function markAsUpdated(): void
     {
         $this->updatedAt =new DateTime();
+    }
+
+    public function getBudgetRequests(): Collection
+    {
+        return $this->budgetRequests;
     }
 }

@@ -1,6 +1,6 @@
-App\Entity\User:
+App\Entity\BudgetRequest:
   type: entity
-  table: user
+  table: budget_request
 
   id:
     id:
@@ -8,19 +8,19 @@ App\Entity\User:
       generator:
         strategy: AUTO
 
-  oneToMany:
-    budgetRequests:
-      targetEntity: App\Entity\BudgetRequest
-      mappedBy: applicant
+  manyToOne:
+    applicant:
+      targetEntity: App\Entity\User
+    category:
+      targetEntity: App\Entity\User
 
   fields:
-    email:
+    title:
+      type: string
+    description:
       type: string
       nullable: false
-    phone:
-      type: string
-      nullable: false
-    address:
+    status:
       type: string
       nullable: false
     createdAt:
@@ -32,6 +32,3 @@ App\Entity\User:
 
   lifecycleCallbacks:
     preUpdate: [markAsUpdated]
-
-
-

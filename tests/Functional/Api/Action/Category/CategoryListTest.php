@@ -7,7 +7,7 @@ use App\DataFixtures\CategoryFixtures;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
-class ListAllTest extends FunctionalWebTestCase
+class CategoryListTest extends FunctionalWebTestCase
 {
     private const ENDPOINT_URI = 'category/list';
 
@@ -18,7 +18,7 @@ class ListAllTest extends FunctionalWebTestCase
         $this->loadFixtures(new CategoryFixtures());
     }
 
-    public function testListAllGetsAllCategories()
+    public function testCategoryListGetsAllCategories()
     {
         $response = $this->sendRequest('GET', self::ENDPOINT_URI);
 
