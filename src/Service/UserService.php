@@ -46,7 +46,9 @@ class UserService
         }
         else 
         {
-            $user = $this->modifyUser($user, $email, $phone, $address);
+            if(false == $this->sameUserData($user, $phone, $address)){
+                $user = $this->modifyUser($user, $phone, $address);
+            }
         }
 
         return $user;
@@ -76,13 +78,6 @@ class UserService
         }
     }
 
-    private function saveUser(User $user)
-    {
-        $entityManager = $this->managerRegistry->getManagerForClass('App\Entity\User');
-        $entityManager->persist($user);
-        $entityManager->flush();
-    }
-
     private function createUser(string $email, string $phone, string $address): User
     {
         $user = new User($email, $phone, $address);
@@ -92,14 +87,25 @@ class UserService
         return $user;
     }
 
-    private function modifyUser(User $user, string $email, string $phone, string $address): User
+    private function sameUserData(User $user, string $phone, string $address):bool
     {
-        $user->setEmail($email);
+        return $user->getPhone() == $phone && $user->getAddress() == $address;
+    }
+
+    private function modifyUser(User $user, string $phone, string $address): User
+    {
         $user->setPhone($phone);
         $user->setAddress($address);
 
         $this->saveUser($user);
 
         return $user;
+    }
+
+    private function saveUser(User $user)
+    {
+        $entityManager = $this->managerRegistry->getManagerForClass('App\Entity\User');
+        $entityManager->persist($user);
+        $entityManager->flush();
     }
 }

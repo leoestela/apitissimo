@@ -9,10 +9,10 @@ App\Entity\BudgetRequest:
         strategy: AUTO
 
   manyToOne:
-    applicant:
+    user:
       targetEntity: App\Entity\User
     category:
-      targetEntity: App\Entity\User
+      targetEntity: App\Entity\Category
 
   fields:
     title:

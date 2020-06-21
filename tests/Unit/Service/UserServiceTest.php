@@ -16,6 +16,7 @@ class UserServiceTest extends TestCase
 {
     private const EMAIL = 'leoestela@hotmail.com';
     private const PHONE = '+34971100309';
+    private const PHONE_OLD = '+34971473858';
     private const ADDRESS = 'Batle Biel Bibiloni 2 2B';
 
     /** @var UserService */
@@ -36,15 +37,15 @@ class UserServiceTest extends TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->userProphecy = $this->prophesize(User::class);
-        $user = $this->userProphecy->reveal();
 
         $this->managerRegistryProphecy = $this->prophesize(ManagerRegistry::class);
         $managerRegistry = $this->managerRegistryProphecy->reveal();
 
         $this->entityManagerProphecy = $this->prophesize(ObjectManager::class);
         $this->entityManagerProphecy = $this->entityManagerProphecy->willBeConstructedWith([User::class]);
-        $entityManager = $this->entityManagerProphecy->reveal();
 
         $this->userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepository = $this->userRepositoryProphecy->reveal();
@@ -52,47 +53,79 @@ class UserServiceTest extends TestCase
         $this->userService = new UserService($managerRegistry, $userRepository);
     }
 
-    public function aExceptionIsExpected()
-    {
-        $this->expectException(Exception::class);
-    }
-
-    /** @throws */
+    /** @throws  Exception */
     public function testShouldThrowExceptionIfEmailIsNull()
     {
         $this->aExceptionIsExpected();
+
         $this->userService->actualizeUser('', self::PHONE, self::ADDRESS);
     }
 
-    /** @throws */
+    /** @throws  Exception */
     public function testShouldThrowExceptionIfPhoneIsNull()
     {
-        $this->expectException(Exception::class);
+        $this->aExceptionIsExpected();
+
         $this->userService->actualizeUser(self::EMAIL,'',self::ADDRESS);
     }
 
-    /** @throws */
+    /** @throws Exception */
     public function testShouldThrowExceptionIfAddressIsNull()
     {
         $this->aExceptionIsExpected();
+
         $this->userService->actualizeUser(self::EMAIL,self::PHONE,'');
     }
 
-    /** @throws */
+    /** @throws  Exception */
     public function testShouldThrowExceptionIfEmailIsNotValid()
     {
         $this->aExceptionIsExpected();
+
         $this->userService->actualizeUser('leoestela@', self::PHONE,self::ADDRESS);
     }
 
-    /** @throws */
-    public function testShouldModifyUserIfExists()
+    /** @throws  Exception */
+    public function testShouldReturnUserIfExistsAndNoDataChanged()
     {
         $this->userRepositoryProphecy
             ->findOneByEmail(self::EMAIL)
             ->shouldBeCalledOnce()
             ->willReturn($this->userProphecy);
-        $this->userProphecy->setEmail(self::EMAIL)->shouldBeCalledOnce();
+
+        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(self::PHONE);
+        $this->userProphecy->getAddress()->shouldBeCalledOnce()->willReturn(self::ADDRESS);
+
+        $this->userProphecy->setPhone(self::PHONE)->shouldNotBeCalled();
+        $this->userProphecy->setAddress(self::ADDRESS)->shouldNotBeCalled();
+
+        $this->managerRegistryProphecy->getManagerForClass('App\Entity\User')->shouldNotBeCalled();
+
+        $this->entityManagerProphecy->persist($this->userProphecy)->shouldNotBeCalled();
+        $this->entityManagerProphecy->flush()->shouldNotBeCalled();
+
+        try
+        {
+            $modifiedUser = $this->userService
+                ->actualizeUser(self::EMAIL,self::PHONE,self::ADDRESS);
+
+            $this->assertInstanceOf('App\Entity\User', $modifiedUser);
+
+        } catch (Exception $exception) {
+            $this->fail($exception->getMessage());
+        }
+    }
+
+    /** @throws  Exception */
+    public function testShouldModifyAndReturnUserIfExistsAndDataChanged()
+    {
+        $this->userRepositoryProphecy
+            ->findOneByEmail(self::EMAIL)
+            ->shouldBeCalledOnce()
+            ->willReturn($this->userProphecy);
+
+        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(self::PHONE_OLD);
+
         $this->userProphecy->setPhone(self::PHONE)->shouldBeCalledOnce();
         $this->userProphecy->setAddress(self::ADDRESS)->shouldBeCalledOnce();
 
@@ -104,7 +137,8 @@ class UserServiceTest extends TestCase
         $this->entityManagerProphecy->persist($this->userProphecy)->shouldBeCalledOnce();
         $this->entityManagerProphecy->flush()->shouldBeCalledOnce();
 
-        try {
+        try
+        {
             $modifiedUser = $this->userService
                 ->actualizeUser(self::EMAIL,self::PHONE,self::ADDRESS);
 
@@ -115,10 +149,16 @@ class UserServiceTest extends TestCase
         }
     }
 
-    /** @throws */
-    public function testShouldCreateUserIfEmailNotExists()
+    /** @throws  Exception */
+    public function testShouldCreateAndReturnUserIfNotExists()
     {
         $this->userRepositoryProphecy->findOneByEmail(self::EMAIL)->shouldBeCalledOnce()->willReturn(null);
+
+        $this->userProphecy->getPhone()->shouldNotBeCalled();
+        $this->userProphecy->getAddress()->shouldNotBeCalled();
+
+        $this->userProphecy->setPhone(self::PHONE)->shouldNotBeCalled();
+        $this->userProphecy->setAddress(self::ADDRESS)->shouldNotBeCalled();
 
         $this->managerRegistryProphecy
             ->getManagerForClass('App\Entity\User')
@@ -131,10 +171,11 @@ class UserServiceTest extends TestCase
                 {
                     return true;
                 }
-                ))->shouldBeCalledOnce();
+            ))->shouldBeCalledOnce();
         $this->entityManagerProphecy->flush()->shouldBeCalledOnce();
 
-        try {
+        try
+        {
             $modifiedUser = $this->userService
                 ->actualizeUser(self::EMAIL,self::PHONE,self::ADDRESS);
 
@@ -143,6 +184,11 @@ class UserServiceTest extends TestCase
         } catch (Exception $exception) {
             $this->fail($exception->getMessage());
         }
+    }
+
+    public function aExceptionIsExpected()
+    {
+        $this->expectException(Exception::class);
     }
 }
 

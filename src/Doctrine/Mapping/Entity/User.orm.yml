@@ -11,7 +11,7 @@ App\Entity\User:
   oneToMany:
     budgetRequests:
       targetEntity: App\Entity\BudgetRequest
-      mappedBy: applicant
+      mappedBy: user
 
   fields:
     email:

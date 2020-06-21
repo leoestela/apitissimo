@@ -20,12 +20,12 @@ class CategoryListTest extends TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
         $this->action = new CategoryList($categoryRepository);
-
-        parent::setUp();
     }
 
     public function testShouldGetAllCategories():void

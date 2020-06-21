@@ -5,6 +5,7 @@ namespace App\Entity;
 
 
 use App\Api\Action\BudgetRequest\Status;
+use DateTime;
 
 class BudgetRequest
 {
@@ -24,7 +25,7 @@ class BudgetRequest
     protected $status;
 
     /** @var User */
-    protected $applicant;
+    protected $user;
 
     /** @var DateTime */
     protected $createdAt;
@@ -39,7 +40,7 @@ class BudgetRequest
         $this->description = $description;
         $this->category = $category;
         $this->status = Status::STATUS_PENDING;
-        $this->applicant = $applicant;
+        $this->user = $applicant;
         $this->createdAt = new DateTime();
         $this->markAsUpdated();
     }
@@ -119,9 +120,9 @@ class BudgetRequest
     /**
      * @return User
      */
-    public function getApplicant(): User
+    public function getUser(): User
     {
-        return $this->applicant;
+        return $this->user;
     }
 
     /**
