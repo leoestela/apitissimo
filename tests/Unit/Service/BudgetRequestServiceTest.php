@@ -5,56 +5,46 @@ namespace App\Tests\Unit\Service;
 
 
 use App\Entity\BudgetRequest;
-use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Entity\Category;
+use App\Repository\CategoryRepository;
 use App\Service\BudgetRequestService;
 use App\Service\UserService;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Exception;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class BudgetRequestServiceTest extends TestCase
+class BudgetRequestServiceTest extends ServiceTestCase
 {
-    private const DESCRIPTION = 'Descripción de la solicitud de presupuesto.';
-    private const EMAIL = 'leoestela@hotmail.com';
-    private const PHONE = '+34971100309';
-    private const ADDRESS = 'Batle Biel Bibiloni 2 2B';
+    private const CATEGORY_DESCRIPTION = 'Descripción de la solicitud de presupuesto.';
+    private const CATEGORY_ID = 1;
 
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
-    /**  @var ObjectProphecy|User */
-    private $userProphecy;
-
     /** @var ObjectProphecy|UserService */
     private $userServiceProphecy;
 
-    /**  @var ObjectProphecy|ManagerRegistry */
-    private $managerRegistryProphecy;
+    /** @var ObjectProphecy|CategoryRepository */
+    private $categoryRepositoryProphecy;
 
-    /**  @var ObjectProphecy|ObjectManager */
-    private $entityManagerProphecy;
 
+    protected static function getClass(): string
+    {
+        return BudgetRequest::class;
+    }
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->userProphecy = $this->prophesize(User::class);
-
         $this->userServiceProphecy = $this->prophesize(UserService::class);
         $userService = $this->userServiceProphecy->reveal();
 
-        $this->managerRegistryProphecy = $this->prophesize(ManagerRegistry::class);
-        $managerRegistry = $this->managerRegistryProphecy->reveal();
+        $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
+        $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->entityManagerProphecy = $this->prophesize(ObjectManager::class);
-        $this->entityManagerProphecy = $this->entityManagerProphecy->willBeConstructedWith([BudgetRequest::class]);
-
-        $this->budgetRequestService = new BudgetRequestService($userService, $managerRegistry);
+        $this->budgetRequestService = new BudgetRequestService(
+            $userService, $categoryRepository, $this->managerRegistry);
     }
 
     /** @throws  Exception */
@@ -66,9 +56,9 @@ class BudgetRequestServiceTest extends TestCase
             null,
             '',
             null,
-            self::EMAIL,
-            self::PHONE,
-            self::ADDRESS);
+            self::USER_EMAIL,
+            self::USER_PHONE,
+            self::USER_ADDRESS);
     }
 
     /** @throws  Exception */
@@ -78,11 +68,11 @@ class BudgetRequestServiceTest extends TestCase
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::DESCRIPTION,
+            self::CATEGORY_DESCRIPTION,
             null,
             '',
-            self::PHONE,
-            self::ADDRESS);
+            self::USER_PHONE,
+            self::USER_ADDRESS);
     }
 
     /** @throws  Exception */
@@ -92,11 +82,11 @@ class BudgetRequestServiceTest extends TestCase
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::DESCRIPTION,
+            self::CATEGORY_DESCRIPTION,
             null,
-            self::EMAIL,
+            self::USER_EMAIL,
             '',
-            self::ADDRESS);
+            self::USER_ADDRESS);
     }
 
     /** @throws Exception */
@@ -106,10 +96,10 @@ class BudgetRequestServiceTest extends TestCase
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::DESCRIPTION,
+            self::CATEGORY_DESCRIPTION,
             null,
-            self::EMAIL,
-            self::PHONE,
+            self::USER_EMAIL,
+            self::USER_PHONE,
             '');
     }
 
@@ -120,25 +110,77 @@ class BudgetRequestServiceTest extends TestCase
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::DESCRIPTION,
+            self::CATEGORY_DESCRIPTION,
             null,
             'antoniahernandez55@',
-            self::PHONE,
-            self::ADDRESS);
+            self::USER_PHONE,
+            self::USER_ADDRESS);
     }
 
     public function testShouldCreateBudgetRequestWithoutCategory()
     {
+        $this->mockActualizeUser();
+
+        $this->categoryRepositoryProphecy->findCategoryById()->shouldNotBeCalled();
+
+        $this->mockSaveNewBudgetRequest();
+
+        try
+        {
+            $this->budgetRequestService->createBudgetRequest(
+                null,
+                self::CATEGORY_DESCRIPTION,
+                null,
+                self::USER_EMAIL,
+                self::USER_PHONE,
+                self::USER_ADDRESS);
+        } catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+    }
+
+    public function testShouldCreateBudgetRequestWithCategory()
+    {
+        $this->mockActualizeUser();
+
+        $category = new Category('Categoria 1', null);
+
+        $this->categoryRepositoryProphecy
+            ->findCategoryById(self::CATEGORY_ID)->shouldBeCalledOnce()->willReturn($category);
+
+        $this->mockSaveNewBudgetRequest();
+
+        try
+        {
+            $this->budgetRequestService->createBudgetRequest(
+                null,
+                self::CATEGORY_DESCRIPTION,
+                self::CATEGORY_ID,
+                self::USER_EMAIL,
+                self::USER_PHONE,
+                self::USER_ADDRESS);
+        } catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+    }
+
+    public function mockActualizeUser()
+    {
         try {
             $this->userServiceProphecy
-                ->actualizeUser(self::EMAIL, self::PHONE, self::ADDRESS)
+                ->actualizeUser(self::USER_EMAIL, self::USER_PHONE, self::USER_ADDRESS)
                 ->shouldBeCalledOnce()
                 ->willReturn($this->userProphecy);
         } catch (Exception $exception)
         {
             $this->fail($exception->getMessage());
         }
+    }
 
+    public function mockSaveNewBudgetRequest()
+    {
         $this->managerRegistryProphecy
             ->getManagerForClass('App\Entity\BudgetRequest')
             ->shouldBeCalledOnce()
@@ -152,24 +194,5 @@ class BudgetRequestServiceTest extends TestCase
                 }
             ))->shouldBeCalledOnce();
         $this->entityManagerProphecy->flush()->shouldBeCalledOnce();
-
-        try
-        {
-            $this->budgetRequestService->createBudgetRequest(
-                null,
-                self::DESCRIPTION,
-                null,
-                self::EMAIL,
-                self::PHONE,
-                self::ADDRESS);
-        } catch (Exception $exception)
-        {
-            $this->fail($exception->getMessage());
-        }
-    }
-
-    public function aExceptionIsExpected()
-    {
-        $this->expectException(Exception::class);
     }
 }

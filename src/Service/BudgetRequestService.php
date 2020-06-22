@@ -4,6 +4,8 @@
 namespace App\Service;
 
 use App\Entity\BudgetRequest;
+use App\Entity\Category;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 
@@ -13,13 +15,23 @@ class BudgetRequestService
     /** @var UserService */
     private $userService;
 
+    /** @var CategoryRepository */
+    private $categoryRepository;
+
+    /** @var Category */
+    private $category;
+
     /** @var ManagerRegistry */
     private $managerRegistry;
 
 
-    public function __construct(UserService $userService, ManagerRegistry $managerRegistry)
+    public function __construct(
+        UserService $userService,
+        CategoryRepository $categoryRepository,
+        ManagerRegistry $managerRegistry)
     {
         $this->userService = $userService;
+        $this->categoryRepository = $categoryRepository;
         $this->managerRegistry = $managerRegistry;
     }
 
@@ -50,7 +62,12 @@ class BudgetRequestService
 
         $user = $this->userService->actualizeUser($email, $phone, $address);
 
-        $budgetRequest = new BudgetRequest($title, $description, null, $user);
+        if (null != $categoryId)
+        {
+            $this->category = $this->categoryRepository->findCategoryById($categoryId);
+        }
+
+        $budgetRequest = new BudgetRequest($title, $description, $this->category, $user);
 
         $entityManager = $this->managerRegistry->getManagerForClass('App\Entity\BudgetRequest');
         $entityManager->persist($budgetRequest);

@@ -40,15 +40,14 @@ class UserService
 
         $user = $this->userRepository->findOneByEmail($email);
 
+        if  (null != $user && false == $this->sameUserData($user, $phone, $address))
+        {
+            $user = $this->modifyUser($user, $phone, $address);
+        }
+
         if (null == $user)
         {
             $user = $this->createUser($email, $phone, $address);
-        }
-        else 
-        {
-            if(false == $this->sameUserData($user, $phone, $address)){
-                $user = $this->modifyUser($user, $phone, $address);
-            }
         }
 
         return $user;
