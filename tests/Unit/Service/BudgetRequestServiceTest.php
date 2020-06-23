@@ -117,6 +117,22 @@ class BudgetRequestServiceTest extends ServiceTestCase
             self::USER_ADDRESS);
     }
 
+    /** @throws  Exception */
+    public function testShouldThrowExceptionIfCategoryPassedNotExists()
+    {
+        $this->mockActualizeUser();
+
+        $this->aExceptionIsExpected();
+
+        $this->budgetRequestService->createBudgetRequest(
+            null,
+            self::CATEGORY_DESCRIPTION,
+            9999999,
+            self::USER_EMAIL,
+            self::USER_PHONE,
+            self::USER_ADDRESS);
+    }
+
     public function testShouldCreateBudgetRequestWithoutCategory()
     {
         $this->mockActualizeUser();

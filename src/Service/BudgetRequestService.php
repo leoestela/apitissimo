@@ -64,12 +64,12 @@ class BudgetRequestService
 
         if (null != $categoryId)
         {
-            $this->category = $this->categoryRepository->findCategoryById($categoryId);
+            $this->getCategoryById($categoryId);
         }
 
         $budgetRequest = new BudgetRequest($title, $description, $this->category, $user);
 
-        $entityManager = $this->managerRegistry->getManagerForClass('App\Entity\BudgetRequest');
+        $entityManager = $this->managerRegistry->getManagerForClass(BudgetRequest::class);
         $entityManager->persist($budgetRequest);
         $entityManager->flush();
 
@@ -97,6 +97,20 @@ class BudgetRequestService
         if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
         {
             throw new Exception('Invalid e-mail', 100);
+        }
+    }
+
+    /**
+     * @param int $categoryId
+     * @throws Exception
+     */
+    public function getCategoryById(int $categoryId)
+    {
+        $this->category = $this->categoryRepository->findCategoryById($categoryId);
+
+        if (null == $this->category)
+        {
+            throw new Exception('Category ' . $categoryId . ' does not exists', 100);
         }
     }
 }

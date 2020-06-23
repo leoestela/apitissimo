@@ -10,9 +10,9 @@ use Exception;
 
 class UserServiceTest extends FunctionalWebTestCase
 {
-    private const EMAIL = 'leoestela@hotmail.com';
-    private const PHONE = '971100309';
-    private const ADDRESS = 'Batle Biel Bibiloni 2 2B';
+    private const USER_EMAIL = 'leoestela@hotmail.com';
+    private const USER_PHONE = '971100309';
+    private const USER_ADDRESS = 'Batle Biel Bibiloni 2 2B';
 
     /** @var User */
     private $user;
@@ -22,7 +22,10 @@ class UserServiceTest extends FunctionalWebTestCase
     {
         parent::setUp();
 
-        $this->user = static::$container->get('user_service')->actualizeUser(self::EMAIL, self::PHONE, self::ADDRESS);
+        $this->user = static::$container->get('user_service')->actualizeUser(
+            self::USER_EMAIL,
+            self::USER_PHONE,
+            self::USER_ADDRESS);
     }
 
     public function testActualizeNonExistingUserCreatesUser()
@@ -39,9 +42,9 @@ class UserServiceTest extends FunctionalWebTestCase
 
     public function usersAreEquals()
     {
-        $this->assertEquals(self::EMAIL, $this->user->getEmail());
-        $this->assertEquals(self::PHONE, $this->user->getPhone());
-        $this->assertEquals(self::ADDRESS, $this->user->getAddress());
+        $this->assertEquals(self::USER_EMAIL, $this->user->getEmail());
+        $this->assertEquals(self::USER_PHONE, $this->user->getPhone());
+        $this->assertEquals(self::USER_ADDRESS, $this->user->getAddress());
     }
 
     /** @throws Exception */

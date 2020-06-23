@@ -34,13 +34,13 @@ class BudgetRequest
     protected $updatedAt;
 
 
-    public function __construct(?string $title, string $description, ?Category $category, User $applicant)
+    public function __construct(?string $title, string $description, ?Category $category, User $user)
     {
         $this->title = $title;
         $this->description = $description;
         $this->category = $category;
         $this->status = Status::STATUS_PENDING;
-        $this->user = $applicant;
+        $this->user = $user;
         $this->createdAt = new DateTime();
         $this->markAsUpdated();
     }

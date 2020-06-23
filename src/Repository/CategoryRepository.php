@@ -17,6 +17,7 @@ class CategoryRepository extends ServiceEntityRepository
 
     public function findCategoryById (int $categoryId)
     {
-        return parent::findOneBy($categoryId, null);
+        return parent::findOneBy(['id' => $categoryId], null);
     }
+
 }

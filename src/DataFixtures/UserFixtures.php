@@ -4,6 +4,7 @@
 namespace App\DataFixtures;
 
 
+use App\Entity\BudgetRequest;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
