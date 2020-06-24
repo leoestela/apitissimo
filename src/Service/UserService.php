@@ -8,7 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 
-class UserService
+class UserService extends ValidationService
 {
     /** @var ManagerRegistry */
     private $managerRegistry;
@@ -32,11 +32,7 @@ class UserService
      */
     public function actualizeUser(string $email, string $phone, string $address): User
     {
-        $this->requiredFieldInformed($email);
-        $this->requiredFieldInformed($phone);
-        $this->requiredFieldInformed($address);
-
-        $this->isValidEmail($email);
+        $this->userValidData($email, $phone, $address);
 
         $user = $this->userRepository->findOneByEmail($email);
 
@@ -51,30 +47,6 @@ class UserService
         }
 
         return $user;
-    }
-
-    /**
-     * @param string $requiredField
-     * @throws Exception
-     */
-    private function requiredFieldInformed(string $requiredField)
-    {
-        if (null == $requiredField)
-        {
-            throw new Exception('Required field not informed', 100);
-        }
-    }
-
-    /**
-     * @param string $email
-     * @throws Exception
-     */
-    private function isValidEmail(string $email)
-    {
-        if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            throw new Exception('Invalid e-mail', 100);
-        }
     }
 
     private function createUser(string $email, string $phone, string $address): User

@@ -9,7 +9,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 
-class BudgetRequestService
+class BudgetRequestService extends ValidationService
 {
 
     /** @var UserService */
@@ -54,11 +54,8 @@ class BudgetRequestService
         string $address):BudgetRequest
     {
         $this->requiredFieldInformed($description);
-        $this->requiredFieldInformed($email);
-        $this->requiredFieldInformed($phone);
-        $this->requiredFieldInformed($address);
 
-        $this->isValidEmail($email);
+        $this->userValidData($email, $phone, $address);
 
         $user = $this->userService->actualizeUser($email, $phone, $address);
 
@@ -74,30 +71,6 @@ class BudgetRequestService
         $entityManager->flush();
 
         return $budgetRequest;
-    }
-
-    /**
-     * @param string $requiredField
-     * @throws Exception
-     */
-    private function requiredFieldInformed(string $requiredField)
-    {
-        if (null == $requiredField)
-        {
-            throw new Exception('Required field not informed', 100);
-        }
-    }
-
-    /**
-     * @param string $email
-     * @throws Exception
-     */
-    private function isValidEmail(string $email)
-    {
-        if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            throw new Exception('Invalid e-mail', 100);
-        }
     }
 
     /**
