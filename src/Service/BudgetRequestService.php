@@ -83,7 +83,7 @@ class BudgetRequestService extends ValidationService
 
         if (null == $this->category)
         {
-            throw new Exception('Category ' . $categoryId . ' does not exists', 100);
+            throw new Exception('Category ' . $categoryId . ' does not exists', 400);
         }
     }
 }

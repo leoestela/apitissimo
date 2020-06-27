@@ -19,7 +19,8 @@
     "require-dev": {
         "doctrine/data-fixtures": "^1.4",
         "liip/test-fixtures-bundle": "^1.0.0",
-        "symfony/phpunit-bridge": "^5.1"
+        "symfony/phpunit-bridge": "^5.1",
+        "ext-json": "*"
     },
     "config": {
         "preferred-install": {

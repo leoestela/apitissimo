@@ -42,7 +42,7 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
         $this->budgetRequestsAreEquals();
     }
 
-    public function testCreateBudgetRequestWithCategory()
+    public function testCreateBudgetRequestWithValidCategory()
     {
         $this->loadFixtures(new CategoryFixtures());
 
@@ -58,6 +58,24 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
         $this->budgetRequestsAreEquals();
         $this->assertEquals(self::BUDGET_REQUEST_CATEGORY_ID, $this->budgetRequest->getCategory()->getId());
         $this->assertNotEmpty($this->budgetRequest->getId());
+    }
+
+    public function testCreateBudgetRequestWithInvalidCategory()
+    {
+        try {
+            $this->budgetRequest = static::$container->get('budget_request_service')->createBudgetRequest(
+                self::BUDGET_REQUEST_TITLE,
+                self::BUDGET_REQUEST_DESCRIPTION,
+                self::BUDGET_REQUEST_CATEGORY_ID,
+                self::USER_EMAIL,
+                self::USER_PHONE,
+                self::USER_ADDRESS
+            );
+        }
+        catch (Exception $exception)
+        {
+            $this->assertEquals(400, $exception->getCode());
+        }
     }
 
     public function budgetRequestsAreEquals()

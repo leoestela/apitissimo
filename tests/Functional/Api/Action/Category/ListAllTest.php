@@ -3,14 +3,13 @@
 
 namespace App\Tests\Functional\Api\Action\Category;
 
+use App\Api\EndpointUri;
 use App\DataFixtures\CategoryFixtures;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
-class CategoryListTest extends FunctionalWebTestCase
+class ListAllTest extends FunctionalWebTestCase
 {
-    private const ENDPOINT_URI = 'category/list';
-
     public function setUp()
     {
         parent::setUp();
@@ -20,7 +19,7 @@ class CategoryListTest extends FunctionalWebTestCase
 
     public function testCategoryListGetsAllCategories()
     {
-        $response = $this->sendRequest('GET', self::ENDPOINT_URI);
+        $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
 
         $responseData = json_decode($response->getContent(), true);
 

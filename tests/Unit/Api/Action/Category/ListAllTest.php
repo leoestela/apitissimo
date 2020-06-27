@@ -4,18 +4,18 @@
 namespace App\Tests\Unit\Api\Action\Category;
 
 
-use App\Api\Action\Category\CategoryList;
+use App\Api\Action\Category\ListAll;
 use App\Repository\CategoryRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Request;
 
-class CategoryListTest extends TestCase
+class ListAllTest extends TestCase
 {
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
 
-    /** @var CategoryList */
+    /** @var ListAll */
     private $action;
 
     public function setUp()
@@ -25,7 +25,7 @@ class CategoryListTest extends TestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->action = new CategoryList($categoryRepository);
+        $this->action = new ListAll($categoryRepository);
     }
 
     public function testShouldGetAllCategories():void

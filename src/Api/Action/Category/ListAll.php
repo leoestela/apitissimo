@@ -6,12 +6,11 @@ namespace App\Api\Action\Category;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
-use phpDocumentor\Reflection\Types\Array_;
+use App\Api\EndpointUri;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CategoryList
+class ListAll
 {
     /** @var CategoryRepository */
     private $categoryRepository;
@@ -22,11 +21,10 @@ class CategoryList
     }
 
     /**
-     * @Route("category/list", methods={"GET"})
-     * @param Request $request
+     * @Route(EndpointUri::URI_CATEGORY_LIST, methods={"GET"})
      * @return JsonResponse
      */
-    public function __invoke(Request $request):JsonResponse
+    public function __invoke():JsonResponse
     {
         $categoriesList = $this->categoryRepository->findAll();
 
