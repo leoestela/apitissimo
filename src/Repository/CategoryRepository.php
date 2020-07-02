@@ -19,5 +19,4 @@ class CategoryRepository extends ServiceEntityRepository
     {
         return parent::findOneBy(['id' => $categoryId], null);
     }
-
 }

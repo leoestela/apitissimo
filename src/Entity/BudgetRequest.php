@@ -64,7 +64,7 @@ class BudgetRequest
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
     }
@@ -96,7 +96,7 @@ class BudgetRequest
     /**
      * @param Category $category
      */
-    public function setCategory(Category $category): void
+    public function setCategory(?Category $category): void
     {
         $this->category = $category;
     }
@@ -143,6 +143,6 @@ class BudgetRequest
 
     public function markAsUpdated(): void
     {
-        $this->updatedAt =new DateTime();
+        $this->updatedAt = new DateTime();
     }
 }

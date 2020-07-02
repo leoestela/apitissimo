@@ -6,7 +6,7 @@ namespace App\Api\Action\BudgetRequest;
 
 abstract class Status
 {
-    public const STATUS_PENDING = 'Pendiente';
-    public const STATUS_PUBLISHED = 'Publicada';
-    public const STATUS_DISCARDED = 'Descartada';
+    public const STATUS_PENDING = 'PENDIENTE';
+    public const STATUS_PUBLISHED = 'PUBLICADA';
+    public const STATUS_DISCARDED = 'DESCARTADA';
 }

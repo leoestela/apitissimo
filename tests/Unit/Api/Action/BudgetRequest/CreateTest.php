@@ -109,6 +109,63 @@ class CreateTest extends TestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
+    public function testShouldThrowBadRequestExceptionIfUserEmailIsMissing()
+    {
+        $payload = [
+            'title' => self::BUDGET_REQUEST_TITLE,
+            'description' => self::BUDGET_REQUEST_DESCRIPTION,
+            'categoryId' => self::CATEGORY_ID,
+            'user_data' => [
+                'phone' => self::USER_PHONE,
+                'address' => self::USER_ADDRESS
+            ]
+        ];
+
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+
+        $response = $this->action->__invoke($request);
+
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserPhoneIsMissing()
+    {
+        $payload = [
+            'title' => self::BUDGET_REQUEST_TITLE,
+            'description' => self::BUDGET_REQUEST_DESCRIPTION,
+            'categoryId' => self::CATEGORY_ID,
+            'user_data' => [
+                'email' => self::USER_EMAIL,
+                'address' => self::USER_ADDRESS
+            ]
+        ];
+
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+
+        $response = $this->action->__invoke($request);
+
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserAddressIsMissing()
+    {
+        $payload = [
+            'title' => self::BUDGET_REQUEST_TITLE,
+            'description' => self::BUDGET_REQUEST_DESCRIPTION,
+            'categoryId' => self::CATEGORY_ID,
+            'user_data' => [
+                'email' => self::USER_EMAIL,
+                'phone' => self::USER_PHONE
+            ]
+        ];
+
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+
+        $response = $this->action->__invoke($request);
+
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
     public function testShouldCreateBudgetRequestIfPayloadIsValid()
     {
         $payload = [

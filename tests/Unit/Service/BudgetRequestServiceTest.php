@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Service;
 
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
+use App\Entity\User;
+use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use App\Service\BudgetRequestService;
 use App\Service\UserService;
@@ -15,8 +17,13 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 class BudgetRequestServiceTest extends ServiceTestCase
 {
-    private const CATEGORY_DESCRIPTION = 'Descripción de la solicitud de presupuesto.';
+    private const USER_INVALID_EMAIL = 'usuario@';
     private const CATEGORY_ID = 1;
+    private const CATEGORY_INVALID_ID = 999999;
+    private const CATEGORY_NAME = 'Categoría 1';
+    private const BUDGET_REQUEST_ID = 1;
+    private const BUDGET_REQUEST_TITLE = 'Título de la solicitud';
+    private const BUDGET_REQUEST_DESCRIPTION = 'Descripción de la solicitud de presupuesto.';
 
     /** @var BudgetRequestService */
     private $budgetRequestService;
@@ -26,6 +33,9 @@ class BudgetRequestServiceTest extends ServiceTestCase
 
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
+
+    /** @var ObjectProphecy|CategoryRepository */
+    private $budgetRequestRepositoryProphecy;
 
 
     protected static function getClass(): string
@@ -43,12 +53,15 @@ class BudgetRequestServiceTest extends ServiceTestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
+        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
+        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
+
         $this->budgetRequestService = new BudgetRequestService(
-            $userService, $categoryRepository, $this->managerRegistry);
+            $userService, $categoryRepository, $budgetRequestRepository, $this->managerRegistry);
     }
 
     /** @throws  Exception */
-    public function testShouldThrowExceptionIfDescriptionIsNull()
+    public function testShouldThrowExceptionIfDescriptionIsNullWhenCreatesBudgetRequest()
     {
         $this->aExceptionIsExpected();
 
@@ -62,13 +75,13 @@ class BudgetRequestServiceTest extends ServiceTestCase
     }
 
     /** @throws  Exception */
-    public function testShouldThrowExceptionIfEmailIsNull()
+    public function testShouldThrowExceptionIfEmailIsNullWhenCreatesBudgetRequest()
     {
         $this->aExceptionIsExpected();
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::CATEGORY_DESCRIPTION,
+            self::BUDGET_REQUEST_DESCRIPTION,
             null,
             '',
             self::USER_PHONE,
@@ -76,13 +89,13 @@ class BudgetRequestServiceTest extends ServiceTestCase
     }
 
     /** @throws  Exception */
-    public function testShouldThrowExceptionIfPhoneIsNull()
+    public function testShouldThrowExceptionIfPhoneIsNullWhenCreatesBudgetRequest()
     {
         $this->aExceptionIsExpected();
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::CATEGORY_DESCRIPTION,
+            self::BUDGET_REQUEST_DESCRIPTION,
             null,
             self::USER_EMAIL,
             '',
@@ -90,13 +103,13 @@ class BudgetRequestServiceTest extends ServiceTestCase
     }
 
     /** @throws Exception */
-    public function testShouldThrowExceptionIfAddressIsNull()
+    public function testShouldThrowExceptionIfAddressIsNullWhenCreatesBudgetRequest()
     {
         $this->aExceptionIsExpected();
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::CATEGORY_DESCRIPTION,
+            self::BUDGET_REQUEST_DESCRIPTION,
             null,
             self::USER_EMAIL,
             self::USER_PHONE,
@@ -104,21 +117,21 @@ class BudgetRequestServiceTest extends ServiceTestCase
     }
 
     /** @throws  Exception */
-    public function testShouldThrowExceptionIfEmailIsNotValid()
+    public function testShouldThrowExceptionIfEmailIsNotValidWhenCreatesBudgetRequest()
     {
         $this->aExceptionIsExpected();
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::CATEGORY_DESCRIPTION,
+            self::BUDGET_REQUEST_DESCRIPTION,
             null,
-            'antoniahernandez55@',
+            self::USER_INVALID_EMAIL,
             self::USER_PHONE,
             self::USER_ADDRESS);
     }
 
     /** @throws  Exception */
-    public function testShouldThrowExceptionIfCategoryPassedNotExists()
+    public function testShouldThrowExceptionIfCategoryPassedNotExistsWhenCreatesBudgetRequest()
     {
         $this->mockActualizeUser();
 
@@ -126,8 +139,8 @@ class BudgetRequestServiceTest extends ServiceTestCase
 
         $this->budgetRequestService->createBudgetRequest(
             null,
-            self::CATEGORY_DESCRIPTION,
-            9999999,
+            self::BUDGET_REQUEST_DESCRIPTION,
+            self::CATEGORY_INVALID_ID,
             self::USER_EMAIL,
             self::USER_PHONE,
             self::USER_ADDRESS);
@@ -139,13 +152,13 @@ class BudgetRequestServiceTest extends ServiceTestCase
 
         $this->categoryRepositoryProphecy->findCategoryById()->shouldNotBeCalled();
 
-        $this->mockSaveNewBudgetRequest();
+        $this->mockSaveBudgetRequest();
 
         try
         {
             $this->budgetRequestService->createBudgetRequest(
                 null,
-                self::CATEGORY_DESCRIPTION,
+                self::BUDGET_REQUEST_DESCRIPTION,
                 null,
                 self::USER_EMAIL,
                 self::USER_PHONE,
@@ -160,18 +173,15 @@ class BudgetRequestServiceTest extends ServiceTestCase
     {
         $this->mockActualizeUser();
 
-        $category = new Category('Categoria 1', null);
+        $this->mockFindCategory();
 
-        $this->categoryRepositoryProphecy
-            ->findCategoryById(self::CATEGORY_ID)->shouldBeCalledOnce()->willReturn($category);
-
-        $this->mockSaveNewBudgetRequest();
+        $this->mockSaveBudgetRequest();
 
         try
         {
             $this->budgetRequestService->createBudgetRequest(
                 null,
-                self::CATEGORY_DESCRIPTION,
+                self::BUDGET_REQUEST_DESCRIPTION,
                 self::CATEGORY_ID,
                 self::USER_EMAIL,
                 self::USER_PHONE,
@@ -182,7 +192,74 @@ class BudgetRequestServiceTest extends ServiceTestCase
         }
     }
 
-    public function mockActualizeUser()
+    /** @throws  Exception */
+    public function testShouldThrowExceptionIfModificationsArrayIsNullWhenModify()
+    {
+        $this->aExceptionIsExpected();
+
+        $this->budgetRequestService->modifyBudgetRequest(self::BUDGET_REQUEST_ID,[]);
+    }
+
+    /** @throws  Exception */
+    public function testShouldThrowExceptionIfBudgetRequestToModifyNotExists()
+    {
+        $this->budgetRequestRepositoryProphecy
+            ->findBudgetRequestById(self::BUDGET_REQUEST_ID)->shouldBeCalledOnce()->willReturn(null);
+
+        $this->aExceptionIsExpected();
+
+        $this->budgetRequestService->modifyBudgetRequest(self::BUDGET_REQUEST_ID,['title' => null]);
+    }
+
+    /** @throws  Exception */
+    public function testShouldThrowExceptionIfNoChangesPassedWhenModify()
+    {
+        $this->mockFindBudgetRequest();
+
+        $this->aExceptionIsExpected();
+
+        $this->budgetRequestService->modifyBudgetRequest(
+            self::BUDGET_REQUEST_ID,
+            ['title' => self::BUDGET_REQUEST_TITLE]);
+    }
+
+    /** @throws  Exception */
+    public function testShouldThrowExceptionIfNewCategoryNotExistsWhenModify()
+    {
+        $this->mockFindBudgetRequest();
+
+        $this->categoryRepositoryProphecy
+            ->findCategoryById(self::CATEGORY_INVALID_ID)->shouldBeCalledOnce()->willReturn(null);
+
+        $this->aExceptionIsExpected();
+
+        $this->budgetRequestService->modifyBudgetRequest(
+            self::BUDGET_REQUEST_ID,
+            ['title' => self::BUDGET_REQUEST_TITLE, 'category_id' => self::CATEGORY_INVALID_ID]);
+    }
+
+    /** @throws  Exception */
+    public function testShouldModifyBudgetRequestIfDataValid()
+    {
+        $this->mockFindBudgetRequest();
+
+        $this->mockFindCategory();
+
+        $this->mockSaveBudgetRequest();
+
+        try
+        {
+            $this->budgetRequestService->modifyBudgetRequest(
+                self::BUDGET_REQUEST_ID,
+                ['title' => self::BUDGET_REQUEST_TITLE, 'category_id' => self::CATEGORY_ID]);
+        }
+        catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+    }
+
+    private function mockActualizeUser()
     {
         try {
             $this->userServiceProphecy
@@ -195,7 +272,7 @@ class BudgetRequestServiceTest extends ServiceTestCase
         }
     }
 
-    public function mockSaveNewBudgetRequest()
+    private function mockSaveBudgetRequest()
     {
         $this->managerRegistryProphecy
             ->getManagerForClass('App\Entity\BudgetRequest')
@@ -210,5 +287,27 @@ class BudgetRequestServiceTest extends ServiceTestCase
                 }
             ))->shouldBeCalledOnce();
         $this->entityManagerProphecy->flush()->shouldBeCalledOnce();
+    }
+
+    private function mockFindCategory()
+    {
+        $category = new Category(self::CATEGORY_NAME, null);
+
+        $this->categoryRepositoryProphecy
+            ->findCategoryById(self::CATEGORY_ID)->shouldBeCalledOnce()->willReturn($category);
+    }
+
+    private function mockFindBudgetRequest()
+    {
+        $user = new User(self::USER_EMAIL, self::USER_PHONE, self::USER_ADDRESS);
+
+        $budgetRequest = new BudgetRequest(
+            self::BUDGET_REQUEST_TITLE,
+            self::BUDGET_REQUEST_DESCRIPTION,
+            null,
+            $user);
+
+        $this->budgetRequestRepositoryProphecy
+            ->findBudgetRequestById(self::BUDGET_REQUEST_ID)->shouldBeCalledOnce()->willReturn($budgetRequest);
     }
 }

@@ -80,7 +80,7 @@ class Create
      * @return mixed
      * @throws Exception
      */
-    private function getJsonData(Request $request)
+    private function getJsonData(Request $request):array
     {
         $jsonData = json_decode($request->getContent(), true);
 
@@ -121,8 +121,11 @@ class Create
         $fieldData = null;
 
         if(array_key_exists($fieldName, $arrayData))
+        {
             $fieldData = $arrayData[$fieldName];
-        elseif ($required)
+        }
+
+        if (null == $fieldData && $required)
         {
             throw new Exception ('Required field missing', 400);
         }
