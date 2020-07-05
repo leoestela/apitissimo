@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Service;
 
+use App\DataFixtures\DataFixtures;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\UserService;
@@ -40,7 +41,7 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->aExceptionIsExpected();
 
-        $this->userService->actualizeUser('', self::USER_PHONE, self::USER_ADDRESS);
+        $this->userService->actualizeUser('', DataFixtures::USER_PHONE, DataFixtures::USER_ADDRESS);
     }
 
     /** @throws  Exception */
@@ -48,7 +49,7 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->aExceptionIsExpected();
 
-        $this->userService->actualizeUser(self::USER_EMAIL,'',self::USER_ADDRESS);
+        $this->userService->actualizeUser(DataFixtures::USER_EMAIL,'',DataFixtures::USER_ADDRESS);
     }
 
     /** @throws Exception */
@@ -56,7 +57,7 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->aExceptionIsExpected();
 
-        $this->userService->actualizeUser(self::USER_EMAIL,self::USER_PHONE,'');
+        $this->userService->actualizeUser(DataFixtures::USER_EMAIL,DataFixtures::USER_PHONE,'');
     }
 
     /** @throws  Exception */
@@ -64,7 +65,11 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->aExceptionIsExpected();
 
-        $this->userService->actualizeUser('leoestela@', self::USER_PHONE,self::USER_ADDRESS);
+        $this->userService->actualizeUser(
+            DataFixtures::USER_INVALID_EMAIL,
+            DataFixtures::USER_PHONE,
+            DataFixtures::USER_ADDRESS
+        );
     }
 
     /** @throws  Exception */
@@ -72,11 +77,11 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->mockFindUserWillReturnParameterValue($this->userProphecy);
 
-        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(self::USER_PHONE);
-        $this->userProphecy->getAddress()->shouldBeCalledOnce()->willReturn(self::USER_ADDRESS);
+        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_PHONE);
+        $this->userProphecy->getAddress()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_ADDRESS);
 
-        $this->userProphecy->setPhone(self::USER_PHONE)->shouldNotBeCalled();
-        $this->userProphecy->setAddress(self::USER_ADDRESS)->shouldNotBeCalled();
+        $this->userProphecy->setPhone(DataFixtures::USER_PHONE)->shouldNotBeCalled();
+        $this->userProphecy->setAddress(DataFixtures::USER_ADDRESS)->shouldNotBeCalled();
 
         $this->managerRegistryProphecy->getManagerForClass('App\Entity\User')->shouldNotBeCalled();
 
@@ -91,10 +96,10 @@ class UserServiceTest extends ServiceTestCase
     {
         $this->mockFindUserWillReturnParameterValue($this->userProphecy);
 
-        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(self::USER_PHONE_OLD);
+        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_OLD_PHONE);
 
-        $this->userProphecy->setPhone(self::USER_PHONE)->shouldBeCalledOnce();
-        $this->userProphecy->setAddress(self::USER_ADDRESS)->shouldBeCalledOnce();
+        $this->userProphecy->setPhone(DataFixtures::USER_PHONE)->shouldBeCalledOnce();
+        $this->userProphecy->setAddress(DataFixtures::USER_ADDRESS)->shouldBeCalledOnce();
 
         $this->mockGetManagerForUserForBeCalledOnce();
 
@@ -113,8 +118,8 @@ class UserServiceTest extends ServiceTestCase
         $this->userProphecy->getPhone()->shouldNotBeCalled();
         $this->userProphecy->getAddress()->shouldNotBeCalled();
 
-        $this->userProphecy->setPhone(self::USER_PHONE)->shouldNotBeCalled();
-        $this->userProphecy->setAddress(self::USER_ADDRESS)->shouldNotBeCalled();
+        $this->userProphecy->setPhone(DataFixtures::USER_PHONE)->shouldNotBeCalled();
+        $this->userProphecy->setAddress(DataFixtures::USER_ADDRESS)->shouldNotBeCalled();
 
         $this->mockGetManagerForUserForBeCalledOnce();
 
@@ -134,7 +139,7 @@ class UserServiceTest extends ServiceTestCase
     public function mockFindUserWillReturnParameterValue(?ObjectProphecy $returns)
     {
         $this->userRepositoryProphecy
-            ->findOneByEmail(self::USER_EMAIL)
+            ->findOneByEmail(DataFixtures::USER_EMAIL)
             ->shouldBeCalledOnce()
             ->willReturn($returns);
     }
@@ -157,11 +162,16 @@ class UserServiceTest extends ServiceTestCase
         try
         {
             $modifiedUser = $this->userService
-                ->actualizeUser(self::USER_EMAIL,self::USER_PHONE,self::USER_ADDRESS);
+                ->actualizeUser(
+                    DataFixtures::USER_EMAIL,
+                    DataFixtures::USER_PHONE,
+                    DataFixtures::USER_ADDRESS
+                );
 
             $this->assertInstanceOf('App\Entity\User', $modifiedUser);
 
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             $this->fail($exception->getMessage());
         }
     }

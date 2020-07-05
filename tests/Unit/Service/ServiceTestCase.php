@@ -13,10 +13,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 abstract class ServiceTestCase extends TestCase
 {
-    protected const USER_EMAIL = 'leoestela@hotmail.com';
-    protected const USER_PHONE = '+34971100309';
-    protected const USER_ADDRESS = 'Batle Biel Bibiloni 2 2B';
-
     /**  @var ObjectProphecy|User */
     protected $userProphecy;
 

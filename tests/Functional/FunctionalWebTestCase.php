@@ -3,6 +3,7 @@
 
 namespace App\Tests\Functional;
 
+use App\DataFixtures\DataFixtures;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
@@ -38,10 +39,10 @@ class FunctionalWebTestCase extends WebTestCase
         $this->executor = new ORMExecutor($entityManager, $purger);
     }
 
-    public function loadFixtures(FixtureInterface $fixture)
+    public function loadFixtures()
     {
         $loader = new Loader();
-        $loader->addFixture($fixture);
+        $loader->addFixture(new DataFixtures());
 
         $this->executor->execute($loader->getFixtures());
     }

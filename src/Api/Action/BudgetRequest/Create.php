@@ -77,10 +77,10 @@ class Create
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return array
      * @throws Exception
      */
-    private function getJsonData(Request $request):array
+    private function getJsonData(Request $request): array
     {
         $jsonData = json_decode($request->getContent(), true);
 
@@ -99,57 +99,26 @@ class Create
     private function getPayload(array $jsonData)
     {
         $this->title = $this->getFieldData($jsonData, 'title');
-        $this->description = $this->getFieldData($jsonData, 'description' ,true);
+        $this->description = $this->getFieldData($jsonData, 'description');
         $this->categoryId = $this->getFieldData($jsonData,'category_id');
 
         $userData = $this->getArrayInArrayData($jsonData, 'user_data');
 
-        $this->userEmail = $this->getFieldData($userData, 'email',true);
-        $this->userPhone = $this->getFieldData($userData, 'phone',true);
-        $this->userAddress = $this->getFieldData($userData, 'address', true);
+        if(null != $userData)
+        {
+            $this->userEmail = $this->getFieldData($userData, 'email');
+            $this->userPhone = $this->getFieldData($userData, 'phone');
+            $this->userAddress = $this->getFieldData($userData, 'address');
+        }
     }
 
-    /**
-     * @param array $arrayData
-     * @param string $fieldName
-     * @param bool $required
-     * @return string|null
-     * @throws Exception
-     */
-    private function getFieldData (array $arrayData, string $fieldName, bool $required = false):?string
+    protected function getFieldData(array $arrayData, string $fieldName, ?string $defaultValue = null): ?string
     {
-        $fieldData = null;
-
-        if(array_key_exists($fieldName, $arrayData))
-        {
-            $fieldData = $arrayData[$fieldName];
-        }
-
-        if (null == $fieldData && $required)
-        {
-            throw new Exception ('Required field missing', 400);
-        }
-
-        return $fieldData;
+        return isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : $defaultValue;
     }
 
-    /**
-     * @param array $arrayData
-     * @param string $arrayName
-     * @return array
-     * @throws Exception
-     */
-    private function getArrayInArrayData (array $arrayData, string $arrayName):array
+    protected function getArrayInArrayData(array $arrayData, string $fieldName): ?array
     {
-        $containedArray = null;
-
-        if(array_key_exists($arrayName, $arrayData))
-            $containedArray = $arrayData[$arrayName];
-        else
-        {
-            throw new Exception ('Required field missing', 400);
-        }
-
-        return $containedArray;
+        return isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : null;
     }
 }

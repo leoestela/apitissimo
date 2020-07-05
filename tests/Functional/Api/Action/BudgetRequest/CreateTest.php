@@ -5,37 +5,29 @@ namespace App\Tests\Functional\Api\Action\BudgetRequest;
 
 
 use App\Api\EndpointUri;
-use App\DataFixtures\CategoryFixtures;
+use App\DataFixtures\DataFixtures;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
 class CreateTest extends FunctionalWebTestCase
 {
-    private const BUDGET_REQUEST_TITLE = 'Título solicitud 1';
-    private const BUDGET_REQUEST_DESCRIPTION = 'Descripción solicitud 1';
-    private const CATEGORY_ID = 1;
-    private const USER_EMAIL = 'leoestela@hotmail.com';
-    private const USER_PHONE = '971473858';
-    private const USER_ADDRESS = 'Batle Biel Bibiloni 2 2B';
-
-
     public function setUp()
     {
         parent::setUp();
 
-        $this->loadFixtures(new CategoryFixtures());
+        $this->loadFixtures();
     }
 
     public function testCreatesNewBudgetRequest()
     {
         $payload = [
-            'title' => self::BUDGET_REQUEST_TITLE,
-            'description' => self::BUDGET_REQUEST_DESCRIPTION,
-            'categoryId' => self::CATEGORY_ID,
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
             'user_data' => [
-                'email' => self::USER_EMAIL,
-                'phone' => self::USER_PHONE,
-                'address' => self::USER_ADDRESS
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
             ]
         ];
 

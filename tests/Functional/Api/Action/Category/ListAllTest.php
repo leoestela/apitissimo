@@ -15,7 +15,6 @@ class ListAllTest extends FunctionalWebTestCase
         parent::setUp();
     }
 
-
     public function testListAllGetsAllCategoriesWhenCategoryTableIsEmpty()
     {
         $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
@@ -28,7 +27,7 @@ class ListAllTest extends FunctionalWebTestCase
 
     public function testListAllGetsAllCategoriesWhenAreLoadedCategories()
     {
-        $this->loadFixtures(new CategoryFixtures());
+        $this->loadFixtures();
 
         $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
 

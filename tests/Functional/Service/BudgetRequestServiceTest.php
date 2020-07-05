@@ -5,71 +5,45 @@ namespace App\Tests\Functional\Service;
 
 
 use App\Api\Action\BudgetRequest\Status;
-use App\DataFixtures\CategoryFixtures;
+use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
+use App\Repository\BudgetRequestRepository;
+use App\Service\BudgetRequestService;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
 class BudgetRequestServiceTest extends FunctionalWebTestCase
 {
-    private const BUDGET_REQUEST_TITLE = 'Título test funcional.';
-    private const BUDGET_REQUEST_DESCRIPTION = 'Descripción categoría test funcional.';
-    private const BUDGET_REQUEST_CATEGORY_ID = 2;
-    private const USER_EMAIL = 'leoestela@hotmail.com';
-    private const USER_PHONE = '971100309';
-    private const USER_ADDRESS = 'Batle Biel Bibiloni 2 2B';
-
     /** @var BudgetRequest */
     private $budgetRequest;
+
+    /** @var BudgetRequestService */
+    private $budgetRequestService;
+
+    /** @var BudgetRequestRepository */
+    private $budgetRequestRepository;
 
 
     public function setUp()
     {
         parent::setUp();
-    }
 
-    public function testCreateBudgetRequestWithoutCategory()
-    {
-        $this->budgetRequest = static::$container->get('budget_request_service')->createBudgetRequest(
-            self::BUDGET_REQUEST_TITLE,
-            self::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            self::USER_EMAIL,
-            self::USER_PHONE,
-            self::USER_ADDRESS
-        );
+        $this->budgetRequestService = static::$container->get('budget_request_service');
 
-        $this->budgetRequestsAreEquals();
-    }
-
-    public function testCreateBudgetRequestWithValidCategory()
-    {
-        $this->loadFixtures(new CategoryFixtures());
-
-        $this->budgetRequest = static::$container->get('budget_request_service')->createBudgetRequest(
-            self::BUDGET_REQUEST_TITLE,
-            self::BUDGET_REQUEST_DESCRIPTION,
-            self::BUDGET_REQUEST_CATEGORY_ID,
-            self::USER_EMAIL,
-            self::USER_PHONE,
-            self::USER_ADDRESS
-        );
-
-        $this->budgetRequestsAreEquals();
-        $this->assertEquals(self::BUDGET_REQUEST_CATEGORY_ID, $this->budgetRequest->getCategory()->getId());
-        $this->assertNotEmpty($this->budgetRequest->getId());
+        $this->budgetRequestRepository = static::$container->get(BudgetRequestRepository::class);
     }
 
     public function testCreateBudgetRequestWithInvalidCategory()
     {
-        try {
-            $this->budgetRequest = static::$container->get('budget_request_service')->createBudgetRequest(
-                self::BUDGET_REQUEST_TITLE,
-                self::BUDGET_REQUEST_DESCRIPTION,
-                self::BUDGET_REQUEST_CATEGORY_ID,
-                self::USER_EMAIL,
-                self::USER_PHONE,
-                self::USER_ADDRESS
+        try
+        {
+            $this->budgetRequest = $this->budgetRequestService->createBudgetRequest(
+                DataFixtures::BUDGET_REQUEST_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                DataFixtures::CATEGORY_ID,
+                DataFixtures::USER_EMAIL,
+                DataFixtures::USER_PHONE,
+                DataFixtures::USER_ADDRESS
             );
         }
         catch (Exception $exception)
@@ -78,14 +52,112 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
         }
     }
 
-    public function budgetRequestsAreEquals()
+    public function testCreateBudgetRequestWithoutCategory()
     {
-        $this->assertEquals(self::BUDGET_REQUEST_TITLE, $this->budgetRequest->getTitle());
-        $this->assertEquals(self::BUDGET_REQUEST_DESCRIPTION, $this->budgetRequest->getDescription());
+        try
+        {
+            $this->budgetRequest = $this->budgetRequestService->createBudgetRequest(
+                DataFixtures::BUDGET_REQUEST_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                null,
+                DataFixtures::USER_EMAIL,
+                DataFixtures::USER_PHONE,
+                DataFixtures::USER_ADDRESS
+            );
+        }
+        catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+
+        $this->budgetRequestCreatedAndDataPassedAreEquals();
+    }
+
+    public function testCreateBudgetRequestWithValidCategory()
+    {
+        $this->loadFixtures();
+
+        try
+        {
+            $this->budgetRequest = $this->budgetRequestService->createBudgetRequest(
+                DataFixtures::BUDGET_REQUEST_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                DataFixtures::CATEGORY_ID,
+                DataFixtures::USER_EMAIL,
+                DataFixtures::USER_PHONE,
+                DataFixtures::USER_ADDRESS
+            );
+        }
+        catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+
+        $this->budgetRequestCreatedAndDataPassedAreEquals();
+        $this->assertEquals(DataFixtures::CATEGORY_ID, $this->budgetRequest->getCategory()->getId());
+        $this->assertNotEmpty($this->budgetRequest->getId());
+    }
+
+    public function testModifyBudgetRequestWithoutCategory()
+    {
+        $this->loadFixtures();
+
+        $budgetRequest = $this->budgetRequestRepository->findBudgetRequestById(1);
+
+        try
+        {
+            $this->budgetRequest = $this->budgetRequestService->modifyBudgetRequest(
+                $budgetRequest,
+                DataFixtures::BUDGET_REQUEST_NEW_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                null
+            );
+        }
+        catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+
+        $this->budgetRequestModifiedFieldsAndDataPassedAreEquals();
+    }
+
+    public function testModifyBudgetRequestWithCategory()
+    {
+        $this->loadFixtures();
+
+        $budgetRequest = $this->budgetRequestRepository->findBudgetRequestById(1);
+
+        try
+        {
+            $this->budgetRequest = $this->budgetRequestService->modifyBudgetRequest(
+                $budgetRequest,
+                DataFixtures::BUDGET_REQUEST_NEW_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                DataFixtures::CATEGORY_ID
+            );
+        }
+        catch (Exception $exception)
+        {
+            $this->fail($exception->getMessage());
+        }
+
+        $this->budgetRequestModifiedFieldsAndDataPassedAreEquals();
+    }
+
+    private function budgetRequestCreatedAndDataPassedAreEquals()
+    {
+        $this->assertEquals(DataFixtures::BUDGET_REQUEST_TITLE, $this->budgetRequest->getTitle());
+        $this->assertEquals(DataFixtures::BUDGET_REQUEST_DESCRIPTION, $this->budgetRequest->getDescription());
         $this->assertEquals(Status::STATUS_PENDING, $this->budgetRequest->getStatus());
-        $this->assertEquals(self::USER_EMAIL, $this->budgetRequest->getUser()->getEmail());
-        $this->assertEquals(self::USER_PHONE, $this->budgetRequest->getUser()->getPhone());
-        $this->assertEquals(self::USER_ADDRESS, $this->budgetRequest->getUser()->getAddress());
+        $this->assertEquals(DataFixtures::USER_EMAIL, $this->budgetRequest->getUser()->getEmail());
+        $this->assertEquals(DataFixtures::USER_PHONE, $this->budgetRequest->getUser()->getPhone());
+        $this->assertEquals(DataFixtures::USER_ADDRESS, $this->budgetRequest->getUser()->getAddress());
+    }
+
+    private function budgetRequestModifiedFieldsAndDataPassedAreEquals()
+    {
+        $this->assertEquals(DataFixtures::BUDGET_REQUEST_NEW_TITLE, $this->budgetRequest->getTitle());
+        $this->assertEquals(DataFixtures::BUDGET_REQUEST_DESCRIPTION, $this->budgetRequest->getDescription());
     }
 
     /**
