@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Api\Action\BudgetRequest;
 
 
 use App\Api\Action\BudgetRequest\Modify;
+use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\User;
@@ -13,7 +14,6 @@ use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\DependencyInjection\Tests\Compiler\D;
 use Symfony\Component\HttpFoundation\Request;
 
 class ModifyTest extends TestCase
@@ -85,6 +85,33 @@ class ModifyTest extends TestCase
         $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, $payload, 400);
     }
 
+    public function testShouldThrowBadRequestExceptionIfReceivesStatusDifferentToPending()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'status' => Status::STATUS_PUBLISHED
+        ];
+
+        $this->mockFindBudgetRequest();
+
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 400);
+    }
+
+    public function testShouldThrowBadRequestExceptionIfActualStatusDifferentToPending()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID
+        ];
+
+        $this->mockFindBudgetRequest(Status::STATUS_PUBLISHED);
+
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 400);
+    }
+
     public function testModifyBudgetRequestIfPayloadIsValid()
     {
         $payload = [
@@ -92,23 +119,7 @@ class ModifyTest extends TestCase
             'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION
         ];
 
-        $user = new User(
-            DataFixtures::USER_EMAIL,
-            DataFixtures::USER_EMAIL,
-            DataFixtures::USER_ADDRESS
-        );
-
-        $budgetRequest = new BudgetRequest(
-            DataFixtures::BUDGET_REQUEST_TITLE,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            $user
-        );
-
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $budgetRequest = $this->mockFindBudgetRequest();
 
         try
         {
@@ -116,7 +127,8 @@ class ModifyTest extends TestCase
                 $budgetRequest,
                 DataFixtures::BUDGET_REQUEST_TITLE,
                 DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-                null
+                null,
+                Status::STATUS_PENDING
             )->shouldBeCalledOnce();
         }
         catch (Exception $exception)
@@ -134,5 +146,33 @@ class ModifyTest extends TestCase
         $response = $this->action->__invoke($budgetRequestId, $request);
 
         $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+    }
+
+    private function mockFindBudgetRequest(string $status = ''): BudgetRequest
+    {
+        $user = new User(
+            DataFixtures::USER_EMAIL,
+            DataFixtures::USER_EMAIL,
+            DataFixtures::USER_ADDRESS
+        );
+
+        $budgetRequest = new BudgetRequest(
+            DataFixtures::BUDGET_REQUEST_TITLE,
+            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            null,
+            $user
+        );
+
+        if(null != $status)
+        {
+            $budgetRequest->setStatus($status);
+        }
+
+        $this->budgetRequestRepositoryProphecy
+            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
+            ->shouldBeCalledOnce()
+            ->willReturn($budgetRequest);
+
+        return $budgetRequest;
     }
 }

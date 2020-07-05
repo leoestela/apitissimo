@@ -1,4 +1,4 @@
-ontrollers:
+controllers:
     resource: ../../src/Api/
     type: annotation
 

@@ -27,6 +27,9 @@ class Modify extends DataManager
     /** @var int */
     private $categoryId;
 
+    /** @var string */
+    private $status;
+
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
@@ -57,8 +60,18 @@ class Modify extends DataManager
 
             $this->getPayload($jsonData, $budgetRequest);
 
-            $this->budgetRequestService
-                ->modifyBudgetRequest($budgetRequest, $this->title, $this->description, $this->categoryId);
+            if($this->status != Status::STATUS_PENDING || $budgetRequest->getStatus() != Status::STATUS_PENDING)
+            {
+                throw new Exception('Action not allowed', 400);
+            }
+
+            $this->budgetRequestService->modifyBudgetRequest(
+                $budgetRequest,
+                $this->title,
+                $this->description,
+                $this->categoryId,
+                $this->status
+            );
         }
         catch (Exception $exception)
         {
@@ -108,6 +121,8 @@ class Modify extends DataManager
             'category_id',
             $this->getActualCategoryId($actualBudgetRequest)
         );
+
+        $this->status = $this->getFieldData($arrayData, 'status', $actualBudgetRequest->getStatus());
     }
 
     private function getActualCategoryId(BudgetRequest $actualBudgetRequest): ?int

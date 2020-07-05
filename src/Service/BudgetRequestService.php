@@ -69,6 +69,7 @@ class BudgetRequestService extends ValidationService
      * @param string|null $title
      * @param string $description
      * @param int|null $categoryId
+     * @param string $status
      * @return BudgetRequest
      * @throws Exception
      */
@@ -76,11 +77,13 @@ class BudgetRequestService extends ValidationService
         BudgetRequest $budgetRequest,
         ?string $title,
         string $description,
-        ?int $categoryId): BudgetRequest
+        ?int $categoryId,
+        string $status): BudgetRequest
     {
         $this->requiredFieldInformed($description);
+        $this->requiredFieldInformed($status);
 
-        if($this->sameBudgetRequestInfo($budgetRequest, $title, $description, $categoryId))
+        if($this->sameBudgetRequestInfo($budgetRequest, $title, $description, $categoryId, $status))
         {
             throw new Exception('No changes made', 400);
         }
@@ -91,6 +94,7 @@ class BudgetRequestService extends ValidationService
         }
         $budgetRequest->setTitle($title);
         $budgetRequest->setDescription($description);
+        $budgetRequest->setStatus($status);
 
         $this->saveBudgetRequest($budgetRequest);
 
@@ -125,12 +129,14 @@ class BudgetRequestService extends ValidationService
         BudgetRequest $actualBudgetRequest,
         ?string $title,
         string $description,
-        ?int $categoryId): bool
+        ?int $categoryId,
+        string $status): bool
     {
         return
             $title == $actualBudgetRequest->getTitle() &&
             $description == $actualBudgetRequest->getDescription() &&
-            $categoryId == $this->getActualCategoryId($actualBudgetRequest);
+            $categoryId == $this->getActualCategoryId($actualBudgetRequest) &&
+            $status == $actualBudgetRequest->getStatus();
     }
 
     private function getActualCategoryId(BudgetRequest $actualBudgetRequest): ?int

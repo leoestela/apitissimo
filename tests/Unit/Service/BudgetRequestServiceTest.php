@@ -4,6 +4,7 @@
 namespace App\Tests\Unit\Service;
 
 
+use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
@@ -197,7 +198,8 @@ class BudgetRequestServiceTest extends ServiceTestCase
             $this->getFakeBudgetRequest(),
             DataFixtures::BUDGET_REQUEST_TITLE,
             DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null
+            null,
+            Status::STATUS_PENDING
         );
     }
 
@@ -212,7 +214,8 @@ class BudgetRequestServiceTest extends ServiceTestCase
             $this->getFakeBudgetRequest(),
             DataFixtures::BUDGET_REQUEST_TITLE,
             DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            DataFixtures::CATEGORY_INVALID_ID
+            DataFixtures::CATEGORY_INVALID_ID,
+            Status::STATUS_PENDING
         );
     }
 
@@ -229,7 +232,8 @@ class BudgetRequestServiceTest extends ServiceTestCase
                 $this->getFakeBudgetRequest(),
                 DataFixtures::BUDGET_REQUEST_NEW_TITLE,
                 DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-                DataFixtures::CATEGORY_ID
+                DataFixtures::CATEGORY_ID,
+                Status::STATUS_PENDING
             );
         }
         catch (Exception $exception)

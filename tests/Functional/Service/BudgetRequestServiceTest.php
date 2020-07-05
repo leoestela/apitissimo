@@ -110,7 +110,8 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
                 $budgetRequest,
                 DataFixtures::BUDGET_REQUEST_NEW_TITLE,
                 DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-                null
+                null,
+                Status::STATUS_PENDING
             );
         }
         catch (Exception $exception)
@@ -133,7 +134,8 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
                 $budgetRequest,
                 DataFixtures::BUDGET_REQUEST_NEW_TITLE,
                 DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-                DataFixtures::CATEGORY_ID
+                DataFixtures::CATEGORY_ID,
+                Status::STATUS_PENDING
             );
         }
         catch (Exception $exception)
