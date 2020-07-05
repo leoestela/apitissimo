@@ -24,10 +24,6 @@ class CreateTest extends TestCase
     /** @var ObjectProphecy|BudgetRequestService */
     private $budgetRequestServiceProphecy;
 
-    /** @var ObjectProphecy|BudgetRequest */
-    private $budgetRequestProphecy;
-
-
 
     public function setUp()
     {
@@ -35,8 +31,6 @@ class CreateTest extends TestCase
 
         $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
         $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
-
-        $this->budgetRequestProphecy = $this->prophesize(BudgetRequest::class);
 
         $this->action = new Create($budgetRequestService);
     }
@@ -89,7 +83,7 @@ class CreateTest extends TestCase
                 null,
                 DataFixtures::USER_EMAIL,
                 DataFixtures::USER_PHONE,
-                DataFixtures::USER_ADDRESS)->shouldBeCalledOnce()->willReturn($this->budgetRequestProphecy);
+                DataFixtures::USER_ADDRESS)->shouldBeCalledOnce();
         }
         catch (Exception $exception)
         {

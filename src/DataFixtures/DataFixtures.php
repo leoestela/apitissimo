@@ -24,6 +24,7 @@ class DataFixtures implements FixtureInterface
     public const CATEGORY_ARRAY = ['Categoría 1', 'Categoría 2', 'Categoría 3', 'Categoría 4'];
 
     public const BUDGET_REQUEST_ID = 1;
+    public const BUDGET_REQUEST_INVALID_ID = 99999;
     public const BUDGET_REQUEST_TITLE = 'Título solicitud 1';
     public const BUDGET_REQUEST_NEW_TITLE = 'Nuevo título solicitud 1';
     public const BUDGET_REQUEST_OLD_TITLE = 'Titulo antiguo solicitud 1';
