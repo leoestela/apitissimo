@@ -96,8 +96,6 @@ class BudgetRequestService extends ValidationService
         $budgetRequest->setDescription($description);
         $budgetRequest->setStatus($status);
 
-        echo('---------------Status: ' . $status);
-
         $this->saveBudgetRequest($budgetRequest);
 
         return $budgetRequest;

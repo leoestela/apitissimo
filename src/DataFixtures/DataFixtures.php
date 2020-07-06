@@ -22,6 +22,7 @@ class DataFixtures implements FixtureInterface
     public const CATEGORY_INVALID_ID = 99999;
     public const CATEGORY_NAME = 'Categoría 1';
     public const CATEGORY_ARRAY = ['Categoría 1', 'Categoría 2', 'Categoría 3', 'Categoría 4'];
+    public const CATEGORY_NAME_FOR_BUDGET_REQUEST = 'Categoría 5';
 
     public const BUDGET_REQUEST_ID = 1;
     public const BUDGET_REQUEST_INVALID_ID = 99999;
@@ -71,10 +72,15 @@ class DataFixtures implements FixtureInterface
 
     private function createBudgetRequest(ObjectManager $manager, User $user)
     {
+        $category = new Category(self::CATEGORY_NAME_FOR_BUDGET_REQUEST, null);
+
+        $manager->persist($category);
+        $manager->flush();
+
         $budgetRequest = new BudgetRequest(
             self::BUDGET_REQUEST_TITLE,
             self::BUDGET_REQUEST_DESCRIPTION,
-            null,
+            $category,
             $user
         );
 

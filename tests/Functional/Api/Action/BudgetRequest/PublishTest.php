@@ -17,7 +17,7 @@ class PublishTest extends FunctionalWebTestCase
         $this->loadFixtures();
     }
 
-    public function testModifyBudgetRequest()
+    public function testPublishBudgetRequest()
     {
         $client = static::createClient();
         $client->request(
@@ -29,6 +29,7 @@ class PublishTest extends FunctionalWebTestCase
             null,
             true);
 
+        echo($client->getResponse()->getContent());
         $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 

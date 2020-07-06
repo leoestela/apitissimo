@@ -43,12 +43,15 @@ class Publish extends DataManager
         {
             $budgetRequest = $this->getBudgetRequestById($budgetRequestId);
 
-            if($budgetRequest->getStatus() != Status::STATUS_PENDING)
+            if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
+                null == $budgetRequest->getTitle() ||
+                null == $budgetRequest->getCategory()
+            )
             {
                 throw new Exception('Action not allowed', 400);
             }
 
-            $categoryId = (null != $budgetRequest->getCategory()) ? $budgetRequest->getCategory()->getId() : null;
+            $categoryId = $budgetRequest->getCategory()->getId();
 
             $this->budgetRequestService->modifyBudgetRequest(
                 $budgetRequest,
