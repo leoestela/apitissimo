@@ -34,11 +34,11 @@ class ValidationService
 
     /**
      * @param string $email
-     * @param string $phone
+     * @param int $phone
      * @param string $address
      * @throws Exception
      */
-    protected function userValidData(string $email, string $phone, string $address)
+    protected function userValidData(string $email, int $phone, string $address)
     {
         $this->requiredFieldInformed($email);
         $this->requiredFieldInformed($phone);

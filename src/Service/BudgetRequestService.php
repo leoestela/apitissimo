@@ -36,7 +36,7 @@ class BudgetRequestService extends ValidationService
      * @param string $description
      * @param int|null $categoryId
      * @param string $email
-     * @param string $phone
+     * @param int $phone
      * @param string $address
      * @return BudgetRequest
      * @throws Exception
@@ -46,7 +46,7 @@ class BudgetRequestService extends ValidationService
         string $description,
         ?int $categoryId,
         string $email,
-        string $phone,
+        int $phone,
         string $address): BudgetRequest
     {
         $this->requiredFieldInformed($description);

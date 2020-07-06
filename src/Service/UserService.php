@@ -25,12 +25,12 @@ class UserService extends ValidationService
 
     /**
      * @param string $email
-     * @param string $phone
+     * @param int $phone
      * @param string $address
      * @return User
      * @throws Exception
      */
-    public function actualizeUser(string $email, string $phone, string $address): User
+    public function actualizeUser(string $email, int $phone, string $address): User
     {
         $this->userValidData($email, $phone, $address);
 
@@ -49,7 +49,7 @@ class UserService extends ValidationService
         return $user;
     }
 
-    private function createUser(string $email, string $phone, string $address): User
+    private function createUser(string $email, int $phone, string $address): User
     {
         $user = new User($email, $phone, $address);
 
@@ -58,12 +58,12 @@ class UserService extends ValidationService
         return $user;
     }
 
-    private function sameUserData(User $user, string $phone, string $address):bool
+    private function sameUserData(User $user, int $phone, string $address):bool
     {
         return $user->getPhone() == $phone && $user->getAddress() == $address;
     }
 
-    private function modifyUser(User $user, string $phone, string $address): User
+    private function modifyUser(User $user, int $phone, string $address): User
     {
         $user->setPhone($phone);
         $user->setAddress($address);

@@ -15,7 +15,7 @@ class User
     /** @var string */
     protected $email;
 
-    /** @var string */
+    /** @var int */
     protected $phone;
 
     /** @var string */
@@ -57,12 +57,12 @@ class User
         return $this;
     }
 
-    public function getPhone(): string
+    public function getPhone(): int
     {
         return $this->phone;
     }
 
-    public function setPhone(string $phone): void
+    public function setPhone(int $phone): void
     {
         $this->phone = $phone;
     }

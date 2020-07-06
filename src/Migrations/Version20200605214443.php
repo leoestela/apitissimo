@@ -20,7 +20,7 @@ final class Version20200605214443 extends AbstractMigration
             CREATE TABLE user (
                 id int(50) AUTO_INCREMENT NOT NULL PRIMARY KEY ,
                 email VARCHAR(200) NOT NULL ,
-                phone VARCHAR(50) NOT NULL ,
+                phone int(50) NOT NULL ,
                 address VARCHAR(500) NOT NULL ,
                 created_at DATETIME NOT NULL ,
                 updated_at DATETIME NOT NULL

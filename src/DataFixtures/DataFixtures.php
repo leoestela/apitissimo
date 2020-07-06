@@ -14,8 +14,8 @@ class DataFixtures implements FixtureInterface
 {
     public const USER_EMAIL = 'user@mail.com';
     public const USER_INVALID_EMAIL = 'user@';
-    public const USER_PHONE = '5551234567';
-    public const USER_OLD_PHONE = '555098765';
+    public const USER_PHONE = 5551234567;
+    public const USER_OLD_PHONE = 555098765;
     public const USER_ADDRESS = 'Calle Mayor 1 1A';
 
     public const CATEGORY_ID = 1;

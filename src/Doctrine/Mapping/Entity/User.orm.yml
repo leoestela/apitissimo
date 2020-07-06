@@ -18,7 +18,7 @@ App\Entity\User:
       type: string
       nullable: false
     phone:
-      type: string
+      type: integer
       nullable: false
     address:
       type: string

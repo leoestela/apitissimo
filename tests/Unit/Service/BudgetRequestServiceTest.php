@@ -18,13 +18,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 class BudgetRequestServiceTest extends ServiceTestCase
 {
-    private const USER_INVALID_EMAIL = 'usuario@';
-    private const CATEGORY_ID = 1;
-    private const CATEGORY_INVALID_ID = 999999;
-    private const CATEGORY_NAME = 'Categoría 1';
-    private const BUDGET_REQUEST_TITLE = 'Título de la solicitud';
-    private const BUDGET_REQUEST_DESCRIPTION = 'Descripción de la solicitud de presupuesto.';
-
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
@@ -79,20 +72,6 @@ class BudgetRequestServiceTest extends ServiceTestCase
             null,
             '',
             DataFixtures::USER_PHONE,
-            DataFixtures::USER_ADDRESS);
-    }
-
-    /** @throws  Exception */
-    public function testShouldThrowExceptionIfPhoneIsNullWhenCreate()
-    {
-        $this->aExceptionIsExpected();
-
-        $this->budgetRequestService->createBudgetRequest(
-            null,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            DataFixtures::USER_EMAIL,
-            '',
             DataFixtures::USER_ADDRESS);
     }
 

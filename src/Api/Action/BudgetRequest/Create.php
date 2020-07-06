@@ -27,7 +27,7 @@ class Create extends DataManager
     /** @var string */
     private $userEmail;
 
-    /** @var string */
+    /** @var int */
     private $userPhone;
 
     /** @var string */

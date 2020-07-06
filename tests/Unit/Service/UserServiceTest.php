@@ -44,14 +44,6 @@ class UserServiceTest extends ServiceTestCase
         $this->userService->actualizeUser('', DataFixtures::USER_PHONE, DataFixtures::USER_ADDRESS);
     }
 
-    /** @throws  Exception */
-    public function testShouldThrowExceptionIfPhoneIsNull()
-    {
-        $this->aExceptionIsExpected();
-
-        $this->userService->actualizeUser(DataFixtures::USER_EMAIL,'',DataFixtures::USER_ADDRESS);
-    }
-
     /** @throws Exception */
     public function testShouldThrowExceptionIfAddressIsNull()
     {
