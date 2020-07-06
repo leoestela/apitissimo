@@ -6,6 +6,7 @@ namespace App\Api\Action\BudgetRequest;
 use App\Api\EndpointUri;
 use App\Entity\BudgetRequest;
 use App\Repository\BudgetRequestRepository;
+use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,16 @@ class Publish extends DataManager
     /** @var BudgetRequestRepository */
     private $budgetRequestRepository;
 
+    /** @var BudgetRequestService */
+    private $budgetRequestService;
 
-    public function __construct(BudgetRequestRepository $budgetRequestRepository)
+
+    public function __construct(
+        BudgetRequestRepository $budgetRequestRepository,
+        BudgetRequestService $budgetRequestService)
     {
         $this->budgetRequestRepository = $budgetRequestRepository;
+        $this->budgetRequestService = $budgetRequestService;
     }
 
     /** @Route(EndpointUri::URI_BUDGET_REQUEST_PUBLISH, methods={"PUT"})
@@ -40,6 +47,16 @@ class Publish extends DataManager
             {
                 throw new Exception('Action not allowed', 400);
             }
+
+            $categoryId = (null != $budgetRequest->getCategory()) ? $budgetRequest->getCategory()->getId() : null;
+
+            $this->budgetRequestService->modifyBudgetRequest(
+                $budgetRequest,
+                $budgetRequest->getTitle(),
+                $budgetRequest->getDescription(),
+                $categoryId,
+                Status::STATUS_PUBLISHED
+            );
         }
         catch(Exception $exception)
         {
