@@ -10,6 +10,8 @@ use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\User;
 use App\Repository\BudgetRequestRepository;
+use App\Service\BudgetRequestService;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +21,11 @@ class PublishTest extends TestCase
     /** @var Publish */
     private $action;
 
-    /**
-     * @var ObjectProphecy|BudgetRequestRepository
-     */
+    /** @var ObjectProphecy|BudgetRequestRepository */
     private $budgetRequestRepositoryProphecy;
+
+    /** @var ObjectProphecy|BudgetRequestService */
+    private $budgetRequestServiceProphecy;
 
 
     public function setUp()
@@ -32,7 +35,10 @@ class PublishTest extends TestCase
         $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
         $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
 
-        $this->action = new Publish($budgetRequestRepository);
+        $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
+        $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
+
+        $this->action = new Publish($budgetRequestRepository, $budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExist()
@@ -91,6 +97,26 @@ class PublishTest extends TestCase
             ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
             ->shouldBeCalledOnce()
             ->willReturn($budgetRequest);
+
+        $this->budgetRequestRepositoryProphecy
+            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
+            ->shouldBeCalledOnce()
+            ->willReturn($budgetRequest);
+
+        try
+        {
+            $this->budgetRequestServiceProphecy->modifyBudgetRequest(
+                $budgetRequest,
+                DataFixtures::BUDGET_REQUEST_TITLE,
+                DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+                null,
+                Status::STATUS_PUBLISHED
+            )->shouldBeCalledOnce();
+        }
+        catch (Exception $exception)
+        {
+            $this->fail();
+        }
 
         $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,201);
     }
