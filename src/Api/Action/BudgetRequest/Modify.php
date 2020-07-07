@@ -6,7 +6,6 @@ namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
 use App\Entity\BudgetRequest;
-use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,12 +30,8 @@ class Modify extends RequestManager
     private $budgetRequestService;
 
 
-    public function __construct(
-        BudgetRequestRepository $budgetRequestRepository,
-        BudgetRequestService $budgetRequestService)
+    public function __construct(BudgetRequestService $budgetRequestService)
     {
-        parent::__construct($budgetRequestRepository);
-
         $this->budgetRequestService = $budgetRequestService;
     }
 
@@ -54,7 +49,17 @@ class Modify extends RequestManager
         {
             $jsonData = $this->getJsonData($request);
 
-            $budgetRequest = $this->getBudgetRequestById($budgetRequestId);
+            if(null == $jsonData)
+            {
+                throw new Exception('Invalid JSON body', 400);
+            }
+
+            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
+
+            if (null == $budgetRequest)
+            {
+                throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
+            }
 
             $this->getPayload($jsonData, $budgetRequest);
 

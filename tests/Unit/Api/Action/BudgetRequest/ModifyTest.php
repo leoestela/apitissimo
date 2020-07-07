@@ -9,7 +9,6 @@ use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\User;
-use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -22,11 +21,6 @@ class ModifyTest extends TestCase
     private $action;
 
     /**
-     * @var ObjectProphecy|BudgetRequestRepository
-     */
-    private $budgetRequestRepositoryProphecy;
-
-    /**
      * @var ObjectProphecy|BudgetRequestService
      */
     private $budgetRequestServiceProphecy;
@@ -36,13 +30,10 @@ class ModifyTest extends TestCase
     {
         parent::setUp();
 
-        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
-        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
-
         $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
         $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
 
-        $this->action = new Modify($budgetRequestRepository, $budgetRequestService);
+        $this->action = new Modify($budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNull()
@@ -77,8 +68,8 @@ class ModifyTest extends TestCase
             'category_id' => DataFixtures::CATEGORY_ID
         ];
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
+        $this->budgetRequestServiceProphecy
+            ->getBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
             ->shouldBeCalledOnce()
             ->willReturn(null);
 
@@ -139,15 +130,6 @@ class ModifyTest extends TestCase
         $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 201);
     }
 
-    private function doRequest(int $budgetRequestId, array $payload, int $expectedStatusCode)
-    {
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
-
-        $response = $this->action->__invoke($budgetRequestId, $request);
-
-        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
-    }
-
     private function mockFindBudgetRequest(string $status = ''): BudgetRequest
     {
         $user = new User(
@@ -168,11 +150,20 @@ class ModifyTest extends TestCase
             $budgetRequest->setStatus($status);
         }
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
+        $this->budgetRequestServiceProphecy
+            ->getBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
             ->shouldBeCalledOnce()
             ->willReturn($budgetRequest);
 
         return $budgetRequest;
+    }
+
+    private function doRequest(int $budgetRequestId, array $payload, int $expectedStatusCode)
+    {
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+
+        $response = $this->action->__invoke($budgetRequestId, $request);
+
+        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
     }
 }

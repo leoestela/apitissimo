@@ -26,12 +26,12 @@ class ListAll
      */
     public function __invoke():JsonResponse
     {
-        $categoriesList = $this->categoryRepository->findAll();
+        $categoryCollection = $this->categoryRepository->findAll();
 
         $data = null;
 
-        if (null !== $categoriesList) {
-            $data = $this->serializeCategoryList($categoriesList);
+        if (null !== $categoryCollection) {
+            $data = $this->serializeCategoryList($categoryCollection);
         }
 
         $response = new JsonResponse($data, 200);
@@ -46,15 +46,15 @@ class ListAll
             'id' => $category->getId(),
             'name' => $category->getName(),
             'description' => $category->getDescription(),
-            'created_at' => $category->getCreatedAt()->format('Y-m-d H:i:s'),
+            'created_at' => $category->getCreatedAt()->format('Y-m-d H:i:s')
         );
     }
 
-    private function serializeCategoryList (array $categoriesList):array
+    private function serializeCategoryList (array $categoryCollection):array
     {
         $data = array('categories' => array());
 
-        foreach ($categoriesList as $category) {
+        foreach ($categoryCollection as $category) {
             $data['categories'][] = $this->serializeCategory($category);
         }
 

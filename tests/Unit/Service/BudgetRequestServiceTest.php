@@ -9,6 +9,7 @@ use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
 use App\Entity\User;
+use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use App\Service\BudgetRequestService;
 use App\Service\UserService;
@@ -27,6 +28,9 @@ class BudgetRequestServiceTest extends ServiceTestCase
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
 
+    /** @var ObjectProphecy|BudgetRequestRepository */
+    private $budgetRequestRepositoryProphecy;
+
 
     protected static function getClass(): string
     {
@@ -43,8 +47,15 @@ class BudgetRequestServiceTest extends ServiceTestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->budgetRequestService =
-            new BudgetRequestService($userService, $categoryRepository, $this->managerRegistry);
+        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
+        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
+
+        $this->budgetRequestService = new BudgetRequestService(
+            $userService,
+            $categoryRepository,
+            $this->managerRegistry,
+            $budgetRequestRepository
+        );
     }
 
     /** @throws  Exception */

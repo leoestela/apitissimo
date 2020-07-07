@@ -10,7 +10,6 @@ use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
 use App\Entity\User;
-use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -22,9 +21,6 @@ class PublishTest extends TestCase
     /** @var Publish */
     private $action;
 
-    /** @var ObjectProphecy|BudgetRequestRepository */
-    private $budgetRequestRepositoryProphecy;
-
     /** @var ObjectProphecy|BudgetRequestService */
     private $budgetRequestServiceProphecy;
 
@@ -34,16 +30,10 @@ class PublishTest extends TestCase
     /** @var ObjectProphecy|Category */
     private $categoryProphecy;
 
-    /** @var Category */
-    private $category;
-
 
     public function setUp()
     {
         parent::setUp();
-
-        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
-        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
 
         $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
         $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
@@ -51,17 +41,13 @@ class PublishTest extends TestCase
         $this->budgetRequestProphecy = $this->prophesize(BudgetRequest::class);
 
         $this->categoryProphecy = $this->prophesize(Category::class);
-        $this->category = $this->categoryProphecy->reveal();
 
-        $this->action = new Publish($budgetRequestRepository, $budgetRequestService);
+        $this->action = new Publish($budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExist()
     {
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn(null);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, null);
 
         $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
     }
@@ -75,24 +61,18 @@ class PublishTest extends TestCase
 
         $budgetRequest->setStatus(Status::STATUS_PUBLISHED);
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualTitleIsNull()
     {
         $budgetRequest = $this->mockCreateBudgetRequest(null, DataFixtures::CATEGORY_NAME);
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualCategoryIsNull()
@@ -104,12 +84,9 @@ class PublishTest extends TestCase
 
         $budgetRequest->setStatus(Status::STATUS_PUBLISHED);
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
     }
 
     public function testShouldPublishBudgetRequestIfActualStatusIsPending()
@@ -121,18 +98,21 @@ class PublishTest extends TestCase
 
         $budgetRequest->setStatus(Status::STATUS_PENDING);
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
+        $this->budgetRequestServiceProphecy
+            ->getBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
             ->shouldBeCalledOnce()
             ->willReturn($this->budgetRequestProphecy);
 
         $this->budgetRequestProphecy->getTitle()->shouldBeCalled()->willReturn(DataFixtures::BUDGET_REQUEST_TITLE);
         $this->budgetRequestProphecy
-            ->getDescription()->shouldBeCalled()->willReturn(DataFixtures::BUDGET_REQUEST_DESCRIPTION);
+            ->getDescription()
+            ->shouldBeCalled()
+            ->willReturn(DataFixtures::BUDGET_REQUEST_DESCRIPTION
+            );
         $this->budgetRequestProphecy->getCategory()->shouldBeCalled()->willReturn($this->categoryProphecy);
         $this->budgetRequestProphecy->getStatus()->shouldBeCalledOnce()->willReturn(Status::STATUS_PENDING);
 
-        $this->categoryProphecy->getId()->shouldBeCalled()->willReturn(DataFixtures::CATEGORY_ID);
+        $this->categoryProphecy->getId()->willReturn(DataFixtures::CATEGORY_ID);
 
         try
         {
@@ -152,13 +132,12 @@ class PublishTest extends TestCase
         $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,201);
     }
 
-    private function doRequest(int $budgetRequestId, int $expectedStatusCode)
+    private function mockGetBudgetRequest(int $budgetRequestId, ?BudgetRequest $budgetRequest)
     {
-        $request = new Request([], [], [], [], [], [], []);
-
-        $response = $this->action->__invoke($budgetRequestId, $request);
-
-        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+        $this->budgetRequestServiceProphecy
+            ->getBudgetRequestById($budgetRequestId)
+            ->shouldBeCalledOnce()
+            ->willReturn($budgetRequest);
     }
 
     private function mockCreateBudgetRequest(?string $budgetRequestTitle, ?string $categoryName): BudgetRequest
@@ -182,5 +161,14 @@ class PublishTest extends TestCase
             $category,
             $user
         );
+    }
+
+    private function doRequest(int $budgetRequestId, int $expectedStatusCode)
+    {
+        $request = new Request([], [], [], [], [], [], []);
+
+        $response = $this->action->__invoke($budgetRequestId, $request);
+
+        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
     }
 }

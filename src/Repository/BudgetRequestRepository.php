@@ -15,8 +15,13 @@ class BudgetRequestRepository extends ServiceEntityRepository
         parent::__construct($registry, BudgetRequest::class);
     }
 
-    public function findBudgetRequestById (int $budgetRequestId)
+    public function findBudgetRequestById(int $budgetRequestId)
     {
         return parent::findOneBy(['id' => $budgetRequestId], null);
+    }
+
+    public function findByWithPagination(array $criteria, ?array $orderBy, ?int $limit, ?int $offset)
+    {
+        return parent::findBy([], null, $limit, $offset);
     }
 }

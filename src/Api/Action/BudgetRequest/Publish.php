@@ -4,7 +4,6 @@
 namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
-use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,13 +16,9 @@ class Publish extends RequestManager
     private $budgetRequestService;
 
 
-    public function __construct(
-        BudgetRequestRepository $budgetRequestRepository,
-        BudgetRequestService $budgetRequestService)
+    public function __construct(BudgetRequestService $budgetRequestService)
     {
-        parent::__construct($budgetRequestRepository);
-
-        $this->budgetRequestService = $budgetRequestService;
+       $this->budgetRequestService = $budgetRequestService;
     }
 
     /** @Route(EndpointUri::URI_BUDGET_REQUEST_PUBLISH, methods={"PUT"})
@@ -38,7 +33,12 @@ class Publish extends RequestManager
 
         try
         {
-            $budgetRequest = $this->getBudgetRequestById($budgetRequestId);
+            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
+
+            if (null == $budgetRequest)
+            {
+                throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
+            }
 
             if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
                 null == $budgetRequest->getTitle() ||

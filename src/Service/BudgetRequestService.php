@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
+use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
@@ -20,15 +21,21 @@ class BudgetRequestService extends ValidationService
     /** @var ManagerRegistry */
     private $managerRegistry;
 
+    /** @var BudgetRequestRepository */
+    private $budgetRequestRepository;
+
 
     public function __construct(
         UserService $userService,
         CategoryRepository $categoryRepository,
-        ManagerRegistry $managerRegistry)
+        ManagerRegistry $managerRegistry,
+        BudgetRequestRepository $budgetRequestRepository
+    )
     {
         $this->userService = $userService;
         $this->categoryRepository = $categoryRepository;
         $this->managerRegistry = $managerRegistry;
+        $this->budgetRequestRepository = $budgetRequestRepository;
     }
 
     /**
@@ -99,6 +106,11 @@ class BudgetRequestService extends ValidationService
         $this->saveBudgetRequest($budgetRequest);
 
         return $budgetRequest;
+    }
+    
+    public function getBudgetRequestById(int $budgetRequestId): ?BudgetRequest
+    {
+        return $this->budgetRequestRepository->findBudgetRequestById($budgetRequestId);
     }
 
     /**

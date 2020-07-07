@@ -49,6 +49,11 @@ class UserService extends ValidationService
         return $user;
     }
 
+    public function getUserByEmail(string $email): ?User
+    {
+        return $this->userRepository->findOneByEmail($email);
+    }
+
     private function createUser(string $email, int $phone, string $address): User
     {
         $user = new User($email, $phone, $address);

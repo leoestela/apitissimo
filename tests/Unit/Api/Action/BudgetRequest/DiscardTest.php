@@ -9,8 +9,8 @@ use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\User;
-use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,9 +20,6 @@ class DiscardTest extends TestCase
     /** @var Discard */
     private $action;
 
-    /** @var ObjectProphecy|BudgetRequestRepository */
-    private $budgetRequestRepositoryProphecy;
-
     /** @var ObjectProphecy|BudgetRequestService */
     private $budgetRequestServiceProphecy;
 
@@ -31,21 +28,15 @@ class DiscardTest extends TestCase
     {
         parent::setUp();
 
-        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
-        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
-
         $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
         $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
 
-        $this->action = new Discard($budgetRequestRepository, $budgetRequestService);
+        $this->action = new Discard($budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExist()
     {
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_INVALID_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn(null);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, null);
 
         $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
     }
@@ -56,10 +47,7 @@ class DiscardTest extends TestCase
 
         $budgetRequest->setStatus(Status::STATUS_DISCARDED);
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
         $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
     }
@@ -68,10 +56,7 @@ class DiscardTest extends TestCase
     {
         $budgetRequest = $this->createFakeBudgetRequest();
 
-        $this->budgetRequestRepositoryProphecy
-            ->findBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
         try
         {
@@ -83,7 +68,7 @@ class DiscardTest extends TestCase
                 Status::STATUS_DISCARDED
             )->shouldBeCalledOnce();
         }
-        catch (\Exception $exception)
+        catch (Exception $exception)
         {
             $this->fail($exception->getMessage());
         }
@@ -91,13 +76,12 @@ class DiscardTest extends TestCase
         $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,201);
     }
 
-    private function doRequest(int $budgetRequestId, int $expectedStatusCode)
+    private function mockGetBudgetRequest(int $budgetRequestId, ?BudgetRequest $budgetRequest)
     {
-        $request = new Request([], [], [], [], [], [], []);
-
-        $response = $this->action->__invoke($budgetRequestId, $request);
-
-        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+        $this->budgetRequestServiceProphecy
+            ->getBudgetRequestById($budgetRequestId)
+            ->shouldBeCalledOnce()
+            ->willReturn($budgetRequest);
     }
 
     private function createFakeBudgetRequest(): BudgetRequest
@@ -114,5 +98,14 @@ class DiscardTest extends TestCase
             null,
             $user
         );
+    }
+
+    private function doRequest(int $budgetRequestId, int $expectedStatusCode)
+    {
+        $request = new Request([], [], [], [], [], [], []);
+
+        $response = $this->action->__invoke($budgetRequestId, $request);
+
+        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
     }
 }

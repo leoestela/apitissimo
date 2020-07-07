@@ -53,6 +53,11 @@ class Create extends RequestManager
         {
             $jsonData = $this->getJsonData($request);
 
+            if(null == $jsonData)
+            {
+                throw new Exception('Invalid JSON body', 400);
+            }
+
             $this->getPayload($jsonData);
 
             $this->budgetRequestService->createBudgetRequest(
