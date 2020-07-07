@@ -17,7 +17,7 @@ class DiscardTest extends FunctionalWebTestCase
         $this->loadFixtures();
     }
 
-    public function testPublishBudgetRequest()
+    public function testDiscardBudgetRequest()
     {
         $client = static::createClient();
         $client->request(

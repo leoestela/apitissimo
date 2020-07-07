@@ -13,11 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Discard extends DataManager
+class Discard extends RequestManager
 {
-    /** @var BudgetRequestRepository */
-    private $budgetRequestRepository;
-
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
@@ -26,7 +23,8 @@ class Discard extends DataManager
         BudgetRequestRepository $budgetRequestRepository,
         BudgetRequestService $budgetRequestService)
     {
-        $this->budgetRequestRepository = $budgetRequestRepository;
+        parent::__construct($budgetRequestRepository);
+
         $this->budgetRequestService = $budgetRequestService;
     }
 
@@ -49,13 +47,11 @@ class Discard extends DataManager
                 throw new Exception('Action not allowed', 400);
             }
 
-            $categoryId = (null != $budgetRequest->getCategory()) ? $budgetRequest->getCategory()->getId() : null;
-
             $this->budgetRequestService->modifyBudgetRequest(
                 $budgetRequest,
                 $budgetRequest->getTitle(),
                 $budgetRequest->getDescription(),
-                $categoryId,
+                $this->getCategoryId($budgetRequest),
                 Status::STATUS_DISCARDED
             );
         }
@@ -65,26 +61,6 @@ class Discard extends DataManager
             $responseCode = $exception->getCode();
         }
 
-        $response = new JsonResponse($responseMessage, $responseCode);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-
-    /**
-     * @param int $budgetRequestId
-     * @return BudgetRequest
-     * @throws Exception
-     */
-    private function getBudgetRequestById(int $budgetRequestId): BudgetRequest
-    {
-        $budgetRequest = $this->budgetRequestRepository->findBudgetRequestById($budgetRequestId);
-
-        if (null == $budgetRequest)
-        {
-            throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
-        }
-
-        return $budgetRequest;
+        return $this->getJsonResponse($responseMessage, $responseCode);
     }
 }

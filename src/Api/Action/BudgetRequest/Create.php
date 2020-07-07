@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Create extends DataManager
+class Create extends RequestManager
 {
     /** @var BudgetRequestService */
     private $budgetRequestService;
@@ -69,10 +69,7 @@ class Create extends DataManager
             $responseCode = $exception->getCode();
         }
 
-        $response = new JsonResponse($responseMessage, $responseCode);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
+        return $this->getJsonResponse($responseMessage, $responseCode);
     }
 
     /**

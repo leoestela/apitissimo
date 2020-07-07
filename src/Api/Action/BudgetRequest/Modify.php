@@ -13,11 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Modify extends DataManager
+class Modify extends RequestManager
 {
-    /** @var BudgetRequestRepository */
-    private $budgetRequestRepository;
-
     /** @var string */
     private $title;
 
@@ -38,7 +35,8 @@ class Modify extends DataManager
         BudgetRequestRepository $budgetRequestRepository,
         BudgetRequestService $budgetRequestService)
     {
-        $this->budgetRequestRepository = $budgetRequestRepository;
+        parent::__construct($budgetRequestRepository);
+
         $this->budgetRequestService = $budgetRequestService;
     }
 
@@ -79,27 +77,7 @@ class Modify extends DataManager
             $responseCode = $exception->getCode();
         }
 
-        $response = new JsonResponse($responseMessage, $responseCode);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-
-    /**
-     * @param int $budgetRequestId
-     * @return BudgetRequest
-     * @throws Exception
-     */
-    private function getBudgetRequestById(int $budgetRequestId): BudgetRequest
-    {
-        $budgetRequest = $this->budgetRequestRepository->findBudgetRequestById($budgetRequestId);
-
-        if (null == $budgetRequest)
-        {
-            throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
-        }
-
-        return $budgetRequest;
+        return $this->getJsonResponse($responseMessage, $responseCode);
     }
 
     /**
@@ -119,14 +97,9 @@ class Modify extends DataManager
         $this->categoryId =$this->getFieldData(
             $arrayData,
             'category_id',
-            $this->getActualCategoryId($actualBudgetRequest)
+            $this->getCategoryId($actualBudgetRequest)
         );
 
         $this->status = $this->getFieldData($arrayData, 'status', $actualBudgetRequest->getStatus());
-    }
-
-    private function getActualCategoryId(BudgetRequest $actualBudgetRequest): ?int
-    {
-        return (null != $actualBudgetRequest->getCategory()) ? $actualBudgetRequest->getCategory()->getId() : null;
     }
 }

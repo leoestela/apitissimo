@@ -4,7 +4,6 @@
 namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
-use App\Entity\BudgetRequest;
 use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use Exception;
@@ -12,11 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Publish extends DataManager
+class Publish extends RequestManager
 {
-    /** @var BudgetRequestRepository */
-    private $budgetRequestRepository;
-
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
@@ -25,7 +21,8 @@ class Publish extends DataManager
         BudgetRequestRepository $budgetRequestRepository,
         BudgetRequestService $budgetRequestService)
     {
-        $this->budgetRequestRepository = $budgetRequestRepository;
+        parent::__construct($budgetRequestRepository);
+
         $this->budgetRequestService = $budgetRequestService;
     }
 
@@ -67,26 +64,6 @@ class Publish extends DataManager
             $responseCode = $exception->getCode();
         }
 
-        $response = new JsonResponse($responseMessage, $responseCode);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-
-    /**
-     * @param int $budgetRequestId
-     * @return BudgetRequest
-     * @throws Exception
-     */
-    private function getBudgetRequestById(int $budgetRequestId): BudgetRequest
-    {
-        $budgetRequest = $this->budgetRequestRepository->findBudgetRequestById($budgetRequestId);
-
-        if (null == $budgetRequest)
-        {
-            throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
-        }
-
-        return $budgetRequest;
+        return $this->getJsonResponse($responseMessage, $responseCode);
     }
 }
