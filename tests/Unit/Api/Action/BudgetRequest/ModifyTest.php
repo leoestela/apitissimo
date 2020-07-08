@@ -132,11 +132,7 @@ class ModifyTest extends TestCase
 
     private function mockFindBudgetRequest(string $status = ''): BudgetRequest
     {
-        $user = new User(
-            DataFixtures::USER_EMAIL,
-            DataFixtures::USER_EMAIL,
-            DataFixtures::USER_ADDRESS
-        );
+        $user = new User(DataFixtures::USER_EMAIL, DataFixtures::USER_EMAIL, DataFixtures::USER_ADDRESS);
 
         $budgetRequest = new BudgetRequest(
             DataFixtures::BUDGET_REQUEST_TITLE,

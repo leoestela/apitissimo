@@ -5,6 +5,7 @@ namespace App\Api\Action\BudgetRequest;
 
 
 use App\Api\EndpointUri;
+use App\Api\RequestManager;
 use App\Entity\BudgetRequest;
 use App\Service\BudgetRequestService;
 use Exception;
@@ -82,7 +83,7 @@ class Modify extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($responseMessage, $responseCode);
+        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
     }
 
     /**

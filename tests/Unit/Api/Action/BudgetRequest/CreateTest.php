@@ -9,7 +9,6 @@ use App\DataFixtures\BudgetRequestFixtures;
 use App\DataFixtures\CategoryFixtures;
 use App\DataFixtures\DataFixtures;
 use App\DataFixtures\UserFixtures;
-use App\Entity\BudgetRequest;
 use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;

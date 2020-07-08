@@ -19,3 +19,8 @@ services:
 
     budget_request_service:
         class: App\Service\BudgetRequestService
+
+    get_set_method_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+        public: false
+        tags: [serializer.normalizer]

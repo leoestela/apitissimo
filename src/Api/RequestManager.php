@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Api\Action\BudgetRequest;
+namespace App\Api;
 
 
 use App\Entity\BudgetRequest;
@@ -20,7 +20,7 @@ class RequestManager
     {
         $jsonData = json_decode($request->getContent(), true);
 
-        if(JSON_ERROR_NONE != json_last_error())
+        if(null != $request->getContent() && JSON_ERROR_NONE != json_last_error())
         {
             throw new Exception('Invalid JSON body', 400);
         }
@@ -43,9 +43,19 @@ class RequestManager
         return (null != $budgetRequest->getCategory()) ? $budgetRequest->getCategory()->getId() : null;
     }
 
-    protected function getJsonResponse(string $responseMessage, int $responseCode): JsonResponse
+    protected function transformResponseToArray(string $message, int $code): array
     {
-        $response = new JsonResponse($responseMessage, $responseCode);
+        return array('message' => $message, 'code' => $code);
+    }
+
+    protected function getJsonForEmptyData(int $code): array
+    {
+        return array('message' => 'No results found', 'code' => $code);
+    }
+
+    protected function getJsonResponse(array $responseContent, int $responseCode): JsonResponse
+    {
+        $response = new JsonResponse($responseContent, $responseCode);
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;

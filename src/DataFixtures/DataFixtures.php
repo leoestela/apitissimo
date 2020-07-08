@@ -12,6 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class DataFixtures implements FixtureInterface
 {
+    public const USER_ID = 1;
     public const USER_EMAIL = 'user@mail.com';
     public const USER_INVALID_EMAIL = 'user@';
     public const USER_PHONE = 5551234567;
@@ -28,7 +29,6 @@ class DataFixtures implements FixtureInterface
     public const BUDGET_REQUEST_INVALID_ID = 99999;
     public const BUDGET_REQUEST_TITLE = 'Título solicitud 1';
     public const BUDGET_REQUEST_NEW_TITLE = 'Nuevo título solicitud 1';
-    public const BUDGET_REQUEST_OLD_TITLE = 'Titulo antiguo solicitud 1';
     public const BUDGET_REQUEST_DESCRIPTION = 'Descripción solicitud 1';
     public const BUDGET_REQUEST_TOO_LONG_DESCRIPTION = 'Lorem ipsum';
 

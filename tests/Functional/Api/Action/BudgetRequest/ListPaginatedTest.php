@@ -1,22 +1,23 @@
 <?php
 
 
-namespace App\Tests\Functional\Api\Action\Category;
+namespace App\Tests\Functional\Api\Action\BudgetRequest;
+
 
 use App\Api\EndpointUri;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
 
-class ListAllTest extends FunctionalWebTestCase
+class ListPaginatedTest extends FunctionalWebTestCase
 {
     public function setUp()
     {
         parent::setUp();
     }
 
-    public function testListAllGetsAllCategoriesWhenCategoryTableIsEmpty()
+    public function testListAllGetsAllBudgetRequestsWhenBudgetRequestTableIsEmpty()
     {
-        $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->sendRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
 
         $responseData = json_decode($response->getContent(), true);
 
@@ -24,11 +25,11 @@ class ListAllTest extends FunctionalWebTestCase
         $this->assertNotEmpty($responseData);
     }
 
-    public function testListAllGetsAllCategoriesWhenCategoriesLoaded()
+    public function testListAllGetsAllBudgetRequestsWhenBudgetRequestsLoaded()
     {
         $this->loadFixtures();
 
-        $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->sendRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
 
         $responseData = json_decode($response->getContent(), true);
 

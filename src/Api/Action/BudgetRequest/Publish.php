@@ -4,6 +4,7 @@
 namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
+use App\Api\RequestManager;
 use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,6 +65,6 @@ class Publish extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($responseMessage, $responseCode);
+        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
     }
 }

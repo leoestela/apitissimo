@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Api\Action\Category;
 
 
 use App\Api\Action\Category\ListAll;
+use App\Api\Serializer;
 use App\Repository\CategoryRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -14,6 +15,9 @@ class ListAllTest extends TestCase
 {
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
+
+    /** @var Serializer */
+    private $serializerProphecy;
 
     /** @var ListAll */
     private $action;
@@ -25,10 +29,13 @@ class ListAllTest extends TestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->action = new ListAll($categoryRepository);
+        $this->serializerProphecy = $this->prophesize(Serializer::class);
+        $serializer = $this->serializerProphecy->reveal();
+
+        $this->action = new ListAll($categoryRepository, $serializer);
     }
 
-    public function testShouldGetAllCategories():void
+    public function testShouldGetAllCategories(): void
     {
         $request = new Request([], [], [], [], [], [], []);
 
@@ -37,6 +44,5 @@ class ListAllTest extends TestCase
         $this->categoryRepositoryProphecy->findAll()->shouldBeCalledOnce()->willReturn(null);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('{}', $response->getContent());
     }
 }

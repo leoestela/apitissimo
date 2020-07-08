@@ -4,20 +4,25 @@
 namespace App\Api\Action\Category;
 
 
-use App\Entity\Category;
+use App\Api\RequestManager;
+use App\Api\Serializer;
 use App\Repository\CategoryRepository;
 use App\Api\EndpointUri;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ListAll
+class ListAll extends RequestManager
 {
     /** @var CategoryRepository */
     private $categoryRepository;
 
-    public function __construct(CategoryRepository $categoryRepository)
+    /** @var Serializer */
+    private $serializer;
+
+    public function __construct(CategoryRepository $categoryRepository, Serializer $serializer)
     {
         $this->categoryRepository = $categoryRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -28,36 +33,11 @@ class ListAll
     {
         $categoryCollection = $this->categoryRepository->findAll();
 
-        $data = null;
+        $jsonContent = (null !== $categoryCollection)
+            ? $this->serializer->serializeCategoryCollection($categoryCollection) : null;
 
-        if (null !== $categoryCollection) {
-            $data = $this->serializeCategoryList($categoryCollection);
-        }
+        $jsonContent = (null == $jsonContent) ? $this->getJsonForEmptyData(200) : $jsonContent;
 
-        $response = new JsonResponse($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-
-    private function serializeCategory(Category $category)
-    {
-        return array(
-            'id' => $category->getId(),
-            'name' => $category->getName(),
-            'description' => $category->getDescription(),
-            'created_at' => $category->getCreatedAt()->format('Y-m-d H:i:s')
-        );
-    }
-
-    private function serializeCategoryList (array $categoryCollection):array
-    {
-        $data = array('categories' => array());
-
-        foreach ($categoryCollection as $category) {
-            $data['categories'][] = $this->serializeCategory($category);
-        }
-
-        return $data;
+        return $this->getJsonResponse($jsonContent, 200);
     }
 }
