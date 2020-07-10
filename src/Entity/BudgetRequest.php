@@ -6,31 +6,62 @@ namespace App\Entity;
 
 use App\Api\Action\BudgetRequest\Status;
 use DateTime;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\BudgetRequestRepository")
+ * @ORM\Table(name="budget_request")
+ */
 class BudgetRequest
 {
-    /** @var int */
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer", length=50)
+     * @Assert\NotBlank
+     */
     protected $id;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
     protected $title;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=500)
+     * @Assert\NotBlank
+     */
     protected $description;
 
-    /** @var Category */
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="budgetRequests")
+     */
     protected $category;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=20)
+     * @Assert\NotBlank
+     * * @Assert\Choice({Status::STATUS_DISCARDED, Status::STATUS_PENDING, Status::STATUS_PUBLISHED})
+     */
     protected $status;
 
-    /** @var User */
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="budgetRequests")
+     * @Assert\NotBlank
+     */
     protected $user;
 
-    /** @var DateTime */
+    /**
+     * @ORM\Column(type="datetime", name="created_at")
+     * @Assert\NotBlank
+     */
     protected $createdAt;
 
-    /** @var DateTime */
+    /**
+     * @ORM\Column(type="datetime", name="updated_at")
+     * @Assert\NotBlank
+     */
     protected $updatedAt;
 
 
@@ -45,97 +76,61 @@ class BudgetRequest
         $this->markAsUpdated();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
     public function setTitle(?string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
     public function setDescription(string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return Category
-     */
     public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    /**
-     * @param Category $category
-     */
     public function setCategory(?Category $category): void
     {
         $this->category = $category;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return User
-     */
     public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;

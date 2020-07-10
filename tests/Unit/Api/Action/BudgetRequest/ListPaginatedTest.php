@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Api\Action\BudgetRequest;
 use App\Api\Action\BudgetRequest\ListPaginated;
 use App\Api\Serializer;
 use App\DataFixtures\DataFixtures;
-use App\Entity\BudgetRequest;
 use App\Entity\User;
 use App\Repository\BudgetRequestRepository;
 use App\Service\UserService;

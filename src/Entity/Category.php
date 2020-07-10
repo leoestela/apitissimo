@@ -5,20 +5,46 @@ namespace App\Entity;
 
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @ORM\Table(name="category")
+ */
 class Category
 {
-    /** @var int */
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer", length=50)
+     * @Assert\NotBlank
+     */
     private $id;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=200)
+     * @Assert\NotBlank
+     */
     private $name;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=500)
+     */
     private $description;
 
-    /** @var DateTime */
+    /**
+     * @ORM\Column(type="datetime", name="created_at")
+     * @Assert\NotBlank
+     */
     private $createdAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BudgetRequest", mappedBy="category")
+     */
+    protected $budgetRequests = null;
+
 
     public function __construct(string $name, ?string $description)
     {
@@ -45,5 +71,10 @@ class Category
     public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
+    }
+
+    public function getBudgetRequests(): ?Collection
+    {
+        return $this->budgetRequests;
     }
 }

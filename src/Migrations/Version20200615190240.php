@@ -26,7 +26,6 @@ final class Version20200615190240 extends AbstractMigration
                 created_at DATETIME NOT NULL
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ENGINE = InnoDB
         ');
-
     }
 
     public function postUp(Schema $schema):void

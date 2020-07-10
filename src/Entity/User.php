@@ -6,28 +6,59 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(name="user")
+ */
 class User
 {
-    /** @var int */
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer", length=50)
+     * @Assert\NotBlank
+     */
     protected $id;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=200)
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
+     */
     protected $email;
 
-    /** @var int */
+    /**
+     * @ORM\Column(type="integer", length=20)
+     * @Assert\NotBlank
+     */
     protected $phone;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string", length=500)
+     * @Assert\NotBlank
+     */
     protected $address;
 
-    /** @var DateTime */
+    /**
+     * @ORM\Column(type="datetime", name="created_at")
+     * @Assert\NotBlank
+     */
     protected $createdAt;
 
-    /** @var DateTime */
+    /**
+     * @ORM\Column(type="datetime", name="updated_at")
+     * @Assert\NotBlank
+     */
     protected $updatedAt;
 
-    /** @var null|Collection|BudgetRequest[] */
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BudgetRequest", mappedBy="user")
+     */
     protected $budgetRequests = null;
 
 
@@ -92,7 +123,7 @@ class User
         $this->updatedAt =new DateTime();
     }
 
-    public function getBudgetRequests(): Collection
+    public function getBudgetRequests(): ?Collection
     {
         return $this->budgetRequests;
     }

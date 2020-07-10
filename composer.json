@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "doctrine/annotations": "^1.10",
         "symfony/apache-pack": "^1.0",
         "symfony/browser-kit": "4.2.*",
         "symfony/console": "4.2.*",
@@ -15,6 +16,7 @@
         "symfony/maker-bundle": "^1.19",
         "symfony/orm-pack": "^1.0",
         "symfony/proxy-manager-bridge": "4.2.*",
+        "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*"
     },
     "require-dev": {
