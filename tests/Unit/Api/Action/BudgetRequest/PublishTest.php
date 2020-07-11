@@ -14,6 +14,7 @@ use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class PublishTest extends TestCase
@@ -49,7 +50,7 @@ class PublishTest extends TestCase
     {
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, null);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualStatusIsNotPending()
@@ -63,7 +64,7 @@ class PublishTest extends TestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualTitleIsNull()
@@ -72,7 +73,7 @@ class PublishTest extends TestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualCategoryIsNull()
@@ -86,7 +87,7 @@ class PublishTest extends TestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldPublishBudgetRequestIfActualStatusIsPending()
@@ -129,7 +130,7 @@ class PublishTest extends TestCase
             $this->fail($exception->getMessage());
         }
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,201);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_OK);
     }
 
     private function mockGetBudgetRequest(int $budgetRequestId, ?BudgetRequest $budgetRequest)

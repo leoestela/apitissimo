@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ValidationService
 {
@@ -16,7 +17,7 @@ class ValidationService
     {
         if (null == $requiredField)
         {
-            throw new Exception('Required field not informed', 100);
+            throw new Exception('Required field not informed', JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
@@ -28,7 +29,7 @@ class ValidationService
     {
         if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
         {
-            throw new Exception('Invalid e-mail', 100);
+            throw new Exception('Invalid e-mail', JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 

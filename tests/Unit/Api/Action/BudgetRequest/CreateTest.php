@@ -13,6 +13,7 @@ use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class CreateTest extends TestCase
@@ -38,7 +39,7 @@ class CreateTest extends TestCase
     {
         $payload = [];
 
-        $this->doRequest($payload, 400);
+        $this->doRequest($payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNotValid()
@@ -60,7 +61,7 @@ class CreateTest extends TestCase
 
         $response = $this->action->__invoke($request);
 
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldCreateBudgetRequestIfPayloadIsValid()
@@ -89,7 +90,7 @@ class CreateTest extends TestCase
             $this->fail($exception->getMessage());
         }
 
-        $this->doRequest($payload, 201);
+        $this->doRequest($payload, JsonResponse::HTTP_CREATED);
     }
 
     private function doRequest(array $payload, int $expectedStatusCode)

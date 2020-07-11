@@ -6,6 +6,7 @@ namespace App\Tests\Functional\Api\Action\Category;
 use App\Api\EndpointUri;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListAllTest extends FunctionalWebTestCase
 {
@@ -20,7 +21,7 @@ class ListAllTest extends FunctionalWebTestCase
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
         $this->assertNotEmpty($responseData);
     }
 
@@ -32,7 +33,7 @@ class ListAllTest extends FunctionalWebTestCase
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
         $this->assertNotEmpty($responseData);
     }
 

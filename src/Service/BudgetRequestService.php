@@ -9,6 +9,7 @@ use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BudgetRequestService extends ValidationService
 {
@@ -92,7 +93,7 @@ class BudgetRequestService extends ValidationService
 
         if($this->sameBudgetRequestInfo($budgetRequest, $title, $description, $categoryId, $status))
         {
-            throw new Exception('No changes made', 400);
+            throw new Exception('No changes made', JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if(null != $categoryId && $categoryId != $this->getActualCategoryId($budgetRequest))
@@ -124,7 +125,7 @@ class BudgetRequestService extends ValidationService
 
         if (null == $category)
         {
-            throw new Exception('Category ' . $categoryId . ' does not exists', 400);
+            throw new Exception('Category ' . $categoryId . ' does not exists', JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return $category;

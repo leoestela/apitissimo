@@ -22,7 +22,7 @@ class RequestManager
 
         if(null != $request->getContent() && JSON_ERROR_NONE != json_last_error())
         {
-            throw new Exception('Invalid JSON body', 400);
+            throw new Exception('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return $jsonData;

@@ -13,6 +13,7 @@ use App\Service\UserService;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ListPaginatedTest extends TestCase
@@ -63,7 +64,7 @@ class ListPaginatedTest extends TestCase
 
         $response = $this->action->__invoke($request);
 
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldThrowBadRequestExceptionIfUserEmailNotExists()
@@ -72,7 +73,7 @@ class ListPaginatedTest extends TestCase
 
         $this->userServiceProphecy->getUserByEmail(DataFixtures::USER_EMAIL)->shouldBeCalledOnce()->willReturn(null);
 
-        $this->doRequest($payload, 400);
+        $this->doRequest($payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldReturnAllUserBudgetRequestsIfUserEmailExists()
@@ -94,7 +95,7 @@ class ListPaginatedTest extends TestCase
 
         $this->userProphecy->getId()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_ID);
 
-        $this->doRequest($payload, 200);
+        $this->doRequest($payload, JsonResponse::HTTP_OK);
     }
 
     private function doRequest(array $payload, int $expectedStatusCode)

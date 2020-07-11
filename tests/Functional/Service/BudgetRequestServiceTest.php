@@ -11,6 +11,7 @@ use App\Repository\BudgetRequestRepository;
 use App\Service\BudgetRequestService;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BudgetRequestServiceTest extends FunctionalWebTestCase
 {
@@ -48,7 +49,7 @@ class BudgetRequestServiceTest extends FunctionalWebTestCase
         }
         catch (Exception $exception)
         {
-            $this->assertEquals(400, $exception->getCode());
+            $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $exception->getCode());
         }
     }
 

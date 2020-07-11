@@ -13,6 +13,7 @@ use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class DiscardTest extends TestCase
@@ -38,7 +39,7 @@ class DiscardTest extends TestCase
     {
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, null);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualStatusIsDiscarded()
@@ -49,7 +50,7 @@ class DiscardTest extends TestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldPublishBudgetRequestIfActualStatusIsNotDiscarded()
@@ -73,7 +74,7 @@ class DiscardTest extends TestCase
             $this->fail($exception->getMessage());
         }
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID,201);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, JsonResponse::HTTP_OK);
     }
 
     private function mockGetBudgetRequest(int $budgetRequestId, ?BudgetRequest $budgetRequest)

@@ -44,7 +44,7 @@ class Modify extends RequestManager
     public function __invoke(int $budgetRequestId, Request $request):JsonResponse
     {
         $responseMessage = 'Solicitud de presupuesto modificada correctamente';
-        $responseCode = 201;
+        $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
@@ -52,21 +52,22 @@ class Modify extends RequestManager
 
             if(null == $jsonData)
             {
-                throw new Exception('Invalid JSON body', 400);
+                throw new Exception('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
 
             if (null == $budgetRequest)
             {
-                throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
+                throw new Exception(
+                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->getPayload($jsonData, $budgetRequest);
 
             if($this->status != Status::STATUS_PENDING || $budgetRequest->getStatus() != Status::STATUS_PENDING)
             {
-                throw new Exception('Action not allowed', 400);
+                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->budgetRequestService->modifyBudgetRequest(

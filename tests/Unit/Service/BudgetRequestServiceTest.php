@@ -28,9 +28,6 @@ class BudgetRequestServiceTest extends ServiceTestCase
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
 
-    /** @var ObjectProphecy|BudgetRequestRepository */
-    private $budgetRequestRepositoryProphecy;
-
 
     protected static function getClass(): string
     {
@@ -47,8 +44,8 @@ class BudgetRequestServiceTest extends ServiceTestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
-        $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
+        $budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
+        $budgetRequestRepository = $budgetRequestRepositoryProphecy->reveal();
 
         $this->budgetRequestService = new BudgetRequestService(
             $userService,

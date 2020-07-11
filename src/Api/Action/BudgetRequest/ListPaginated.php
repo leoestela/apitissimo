@@ -57,7 +57,7 @@ class ListPaginated extends RequestManager
     {
         $jsonContent = [];
         $responseMessage = '';
-        $responseCode = 200;
+        $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
@@ -112,7 +112,7 @@ class ListPaginated extends RequestManager
 
         if(null != $email && null == $this->user)
         {
-            throw new Exception('User ' . 'not exists', 400);
+            throw new Exception('User ' . 'not exists', JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 }

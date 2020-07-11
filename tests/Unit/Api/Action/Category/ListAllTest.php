@@ -9,6 +9,7 @@ use App\Api\Serializer;
 use App\Repository\CategoryRepository;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ListAllTest extends TestCase
@@ -43,6 +44,6 @@ class ListAllTest extends TestCase
 
         $this->categoryRepositoryProphecy->findAll()->shouldBeCalledOnce()->willReturn(null);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
 }

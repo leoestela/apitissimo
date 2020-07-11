@@ -30,7 +30,7 @@ class Publish extends RequestManager
     public function __invoke(int $budgetRequestId, Request $request):JsonResponse
     {
         $responseMessage = 'Solicitud de presupuesto publicada correctamente';
-        $responseCode = 201;
+        $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
@@ -38,7 +38,8 @@ class Publish extends RequestManager
 
             if (null == $budgetRequest)
             {
-                throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
+                throw new Exception(
+                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
@@ -46,7 +47,7 @@ class Publish extends RequestManager
                 null == $budgetRequest->getCategory()
             )
             {
-                throw new Exception('Action not allowed', 400);
+                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $categoryId = $budgetRequest->getCategory()->getId();

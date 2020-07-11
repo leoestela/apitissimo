@@ -31,7 +31,7 @@ class Discard extends RequestManager
     public function __invoke(int $budgetRequestId, Request $request):JsonResponse
     {
         $responseMessage = 'Solicitud de presupuesto descartada correctamente';
-        $responseCode = 201;
+        $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
@@ -39,12 +39,14 @@ class Discard extends RequestManager
 
             if (null == $budgetRequest)
             {
-                throw new Exception('Budget request ' . $budgetRequestId . ' not exists', 400);
+                throw new Exception(
+                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST
+                );
             }
 
             if($budgetRequest->getStatus() == Status::STATUS_DISCARDED)
             {
-                throw new Exception('Action not allowed', 400);
+                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->budgetRequestService->modifyBudgetRequest(

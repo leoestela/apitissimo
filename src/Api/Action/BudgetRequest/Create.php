@@ -3,6 +3,7 @@
 
 namespace App\Api\Action\BudgetRequest;
 
+use App\Api\Action\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
 use App\Service\BudgetRequestService;
@@ -47,8 +48,8 @@ class Create extends RequestManager
      */
     public function __invoke(Request $request):JsonResponse
     {
-        $responseMessage = 'Solicitud de presupuesto creada';
-        $responseCode = 201;
+        $responseMessage = 'Solicitud de presupuesto creada correctamente';
+        $responseCode = JsonResponse::HTTP_CREATED;
 
         try
         {
@@ -56,7 +57,7 @@ class Create extends RequestManager
 
             if(null == $jsonData)
             {
-                throw new Exception('Invalid JSON body', 400);
+                throw new Exception('Invalid Json for budget request create', JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->getPayload($jsonData);

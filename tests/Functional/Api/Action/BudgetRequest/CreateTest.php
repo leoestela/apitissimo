@@ -8,6 +8,7 @@ use App\Api\EndpointUri;
 use App\DataFixtures\DataFixtures;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CreateTest extends FunctionalWebTestCase
 {
@@ -41,7 +42,7 @@ class CreateTest extends FunctionalWebTestCase
             json_encode($payload),
             true);
 
-        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_CREATED, $client->getResponse()->getStatusCode());
     }
 
     /** @throws Exception */

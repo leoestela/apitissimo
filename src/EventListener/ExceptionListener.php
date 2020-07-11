@@ -7,7 +7,6 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use function get_class;
 use function time;
 
 class ExceptionListener
@@ -20,7 +19,6 @@ class ExceptionListener
 
         if ($exception instanceof HttpExceptionInterface) {
             $data = [
-                'class' => get_class($exception),
                 'message' => $exception->getMessage(),
                 'code' => $exception->getStatusCode()
             ];

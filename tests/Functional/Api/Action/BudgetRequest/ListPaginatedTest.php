@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Api\Action\BudgetRequest;
 use App\Api\EndpointUri;
 use App\Tests\Functional\FunctionalWebTestCase;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListPaginatedTest extends FunctionalWebTestCase
 {
@@ -21,7 +22,7 @@ class ListPaginatedTest extends FunctionalWebTestCase
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
         $this->assertNotEmpty($responseData);
     }
 

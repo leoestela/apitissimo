@@ -13,6 +13,7 @@ use App\Service\BudgetRequestService;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ModifyTest extends TestCase
@@ -40,7 +41,7 @@ class ModifyTest extends TestCase
     {
         $payload = [];
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNotValid()
@@ -51,13 +52,13 @@ class ModifyTest extends TestCase
             'category_id' => DataFixtures::CATEGORY_ID
         ];
 
-        $invalidPayload = substr(json_encode($payload),2);
+        $invalidPayload = substr(json_encode($payload), 2);
 
         $request = new Request([], [], [], [], [], [], $invalidPayload);
 
         $response = $this->action->__invoke(DataFixtures::BUDGET_REQUEST_ID, $request);
 
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExist()
@@ -73,7 +74,7 @@ class ModifyTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn(null);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, $payload, 400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfReceivesStatusDifferentToPending()
@@ -87,7 +88,7 @@ class ModifyTest extends TestCase
 
         $this->mockFindBudgetRequest();
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfActualStatusDifferentToPending()
@@ -100,7 +101,7 @@ class ModifyTest extends TestCase
 
         $this->mockFindBudgetRequest(Status::STATUS_PUBLISHED);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 400);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testModifyBudgetRequestIfPayloadIsValid()
@@ -127,7 +128,7 @@ class ModifyTest extends TestCase
             $this->fail($exception->getMessage());
         }
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, 201);
+        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_OK);
     }
 
     private function mockFindBudgetRequest(string $status = ''): BudgetRequest
