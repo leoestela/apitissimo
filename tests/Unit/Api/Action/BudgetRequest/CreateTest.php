@@ -9,30 +9,21 @@ use App\DataFixtures\BudgetRequestFixtures;
 use App\DataFixtures\CategoryFixtures;
 use App\DataFixtures\DataFixtures;
 use App\DataFixtures\UserFixtures;
-use App\Service\BudgetRequestService;
 use Exception;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class CreateTest extends TestCase
+class CreateTest extends ActualizeBudgetRequestTestCase
 {
     /** @var Create */
     private $action;
-
-    /** @var ObjectProphecy|BudgetRequestService */
-    private $budgetRequestServiceProphecy;
 
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
-        $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
-
-        $this->action = new Create($budgetRequestService);
+        $this->action = new Create($this->budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNull()

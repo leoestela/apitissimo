@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 
+use App\Message\Message;
 use App\Api\Action\BudgetRequest\Status;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,18 +20,23 @@ class BudgetRequest
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer", length=50)
-     * @Assert\NotBlank
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\Length(
+     *      max = 50,
+     *      maxMessage = Message::BUDGET_REQUEST_TITLE_MAX_LENGTH)
      */
     protected $title;
 
     /**
      * @ORM\Column(type="string", length=500)
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      max = 500,
+     *      maxMessage = Message::BUDGET_REQUEST_DESCRIPTION_MAX_LENGTH)
      */
     protected $description;
 
@@ -42,7 +48,10 @@ class BudgetRequest
     /**
      * @ORM\Column(type="string", length=20)
      * @Assert\NotBlank
-     * * @Assert\Choice({Status::STATUS_DISCARDED, Status::STATUS_PENDING, Status::STATUS_PUBLISHED})
+     * @Assert\Choice(
+     *     {Status::STATUS_DISCARDED, Status::STATUS_PENDING, Status::STATUS_PUBLISHED},
+     *     message = Message::BUDGET_REQUEST_INVALID_STATUS
+     *     )
      */
     protected $status;
 

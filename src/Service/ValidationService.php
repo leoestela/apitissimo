@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validation;
 
 class ValidationService
 {
@@ -46,5 +47,21 @@ class ValidationService
         $this->requiredFieldInformed($address);
 
         $this->isValidEmail($email);
+    }
+
+    /**
+     * @param $object
+     * @throws Exception
+     */
+    public function constraintsValidation($object)
+    {
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+
+        $violations = $validator->validate($object);
+
+        if (count($violations) >0)
+        {
+            throw new Exception($violations[0]->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+        }
     }
 }

@@ -28,19 +28,64 @@ class RequestManager
         return $jsonData;
     }
 
-    protected function getFieldData(array $arrayData, string $fieldName, ?string $defaultValue = null): ?string
+    /**
+     * @param array $arrayData
+     * @param string $fieldName
+     * @param string|null $defaultValue
+     * @param bool $required
+     * @return string|null
+     * @throws Exception
+     */
+    protected function getFieldData(
+        array $arrayData,
+        string $fieldName,
+        ?string $defaultValue,
+        bool $required = false): ?string
     {
-        return isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : $defaultValue;
+        $fieldData = isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : $defaultValue;
+
+        if($required && null == $fieldData)
+        {
+            throw new Exception('Required field missing', JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return $fieldData;
     }
 
-    protected function getArrayInArrayData(array $arrayData, string $fieldName): ?array
+    /**
+     * @param array $arrayData
+     * @param string $fieldName
+     * @param bool $required
+     * @return array|null
+     * @throws Exception
+     */
+    protected function getArrayInArrayData(array $arrayData, string $fieldName, bool $required = false): ?array
     {
-        return isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : null;
+        $array = isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : null;
+
+        if($required && null == $array)
+        {
+            throw new Exception('Required field missing', JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return $array;
     }
 
     protected function getCategoryId(BudgetRequest $budgetRequest): ?int
     {
         return (null != $budgetRequest->getCategory()) ? $budgetRequest->getCategory()->getId() : null;
+    }
+
+    /**
+     * @param $field
+     * @throws Exception
+     */
+    protected function isNumericField($field)
+    {
+        if(null != $field && !is_numeric($field))
+        {
+            throw new Exception('Field with value ' . $field . ' must be an integer', JsonResponse::HTTP_BAD_REQUEST);
+        }
     }
 
     protected function transformResponseToArray(string $message, int $code): array

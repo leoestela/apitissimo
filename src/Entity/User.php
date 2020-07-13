@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 
+use App\Message\Message;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,28 +20,34 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer", length=50)
-     * @Assert\NotBlank
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=200)
      * @Assert\NotBlank
-     * @Assert\Email(
-     *     message = "The email '{{ value }}' is not a valid email."
-     * )
+     * @Assert\Email(message = Message::USER_INVALID_EMAIL)
+     * @Assert\Length(
+     *      max = 200,
+     *      maxMessage = Message::USER_EMAIL_MAX_LENGTH)
      */
     protected $email;
 
     /**
      * @ORM\Column(type="integer", length=20)
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      max = 20,
+     *      maxMessage = Message::USER_PHONE_MAX_LENGTH)
      */
     protected $phone;
 
     /**
      * @ORM\Column(type="string", length=500)
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      max = 500,
+     *      maxMessage = Message::USER_ADDRESS_MAX_LENGTH)
      */
     protected $address;
 

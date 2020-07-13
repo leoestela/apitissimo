@@ -32,8 +32,6 @@ class UserService extends ValidationService
      */
     public function actualizeUser(string $email, int $phone, string $address): User
     {
-        $this->userValidData($email, $phone, $address);
-
         $user = $this->userRepository->findOneByEmail($email);
 
         if  (null != $user && false == $this->sameUserData($user, $phone, $address))
@@ -54,6 +52,13 @@ class UserService extends ValidationService
         return $this->userRepository->findOneByEmail($email);
     }
 
+    /**
+     * @param string $email
+     * @param int $phone
+     * @param string $address
+     * @return User
+     * @throws Exception
+     */
     private function createUser(string $email, int $phone, string $address): User
     {
         $user = new User($email, $phone, $address);
@@ -68,6 +73,13 @@ class UserService extends ValidationService
         return $user->getPhone() == $phone && $user->getAddress() == $address;
     }
 
+    /**
+     * @param User $user
+     * @param int $phone
+     * @param string $address
+     * @return User
+     * @throws Exception
+     */
     private function modifyUser(User $user, int $phone, string $address): User
     {
         $user->setPhone($phone);
@@ -78,8 +90,14 @@ class UserService extends ValidationService
         return $user;
     }
 
+    /**
+     * @param User $user
+     * @throws Exception
+     */
     private function saveUser(User $user)
     {
+        $this->constraintsValidation($user);
+
         $entityManager = $this->managerRegistry->getManagerForClass('App\Entity\User');
         $entityManager->persist($user);
         $entityManager->flush();

@@ -57,10 +57,6 @@ class BudgetRequestService extends ValidationService
         int $phone,
         string $address): BudgetRequest
     {
-        $this->requiredFieldInformed($description);
-
-        $this->userValidData($email, $phone, $address);
-
         $user = $this->userService->actualizeUser($email, $phone, $address);
 
         $category = (null != $categoryId) ? $this->getCategoryById($categoryId) : null;
@@ -131,8 +127,14 @@ class BudgetRequestService extends ValidationService
         return $category;
     }
 
+    /**
+     * @param BudgetRequest $budgetRequest
+     * @throws Exception
+     */
     private function saveBudgetRequest(BudgetRequest $budgetRequest)
     {
+        $this->constraintsValidation($budgetRequest);
+
         $entityManager = $this->managerRegistry->getManagerForClass(BudgetRequest::class);
         $entityManager->persist($budgetRequest);
         $entityManager->flush();

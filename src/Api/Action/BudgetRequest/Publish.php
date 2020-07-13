@@ -5,6 +5,7 @@ namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
+use App\Message\Message;
 use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,19 +28,22 @@ class Publish extends RequestManager
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(int $budgetRequestId, Request $request):JsonResponse
+    public function __invoke($budgetRequestId, Request $request):JsonResponse
     {
-        $responseMessage = 'Solicitud de presupuesto publicada correctamente';
+        $responseMessage = Message::BUDGET_REQUEST_PUBLISHED_OK;
         $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
+            $this->isNumericField($budgetRequestId);
+
             $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
 
             if (null == $budgetRequest)
             {
                 throw new Exception(
-                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST);
+                    Message::messageReplace('id', $budgetRequestId, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
+                    JsonResponse::HTTP_BAD_REQUEST);
             }
 
             if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
@@ -47,7 +51,7 @@ class Publish extends RequestManager
                 null == $budgetRequest->getCategory()
             )
             {
-                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
+                throw new Exception(Message::BUDGET_REQUEST_PUBLISH_NOT_ALLOWED, JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $categoryId = $budgetRequest->getCategory()->getId();

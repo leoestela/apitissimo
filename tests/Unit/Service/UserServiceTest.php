@@ -12,8 +12,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 
 class UserServiceTest extends ServiceTestCase
 {
-    protected const USER_PHONE_OLD = '+34971473858';
-
     /** @var UserService */
     private $userService;
 
@@ -67,7 +65,7 @@ class UserServiceTest extends ServiceTestCase
     /** @throws  Exception */
     public function testShouldReturnUserIfExistsAndNoDataChanged()
     {
-        $this->mockFindUserWillReturnParameterValue($this->userProphecy);
+        $this->mockFindUserReturningParameterValue($this->userProphecy);
 
         $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_PHONE);
         $this->userProphecy->getAddress()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_ADDRESS);
@@ -86,16 +84,13 @@ class UserServiceTest extends ServiceTestCase
     /** @throws  Exception */
     public function testShouldModifyAndReturnUserIfExistsAndDataChanged()
     {
-        $this->mockFindUserWillReturnParameterValue($this->userProphecy);
+        $user = new User(DataFixtures::USER_EMAIL, DataFixtures::USER_OLD_PHONE, DataFixtures::USER_ADDRESS);
 
-        $this->userProphecy->getPhone()->shouldBeCalledOnce()->willReturn(DataFixtures::USER_OLD_PHONE);
-
-        $this->userProphecy->setPhone(DataFixtures::USER_PHONE)->shouldBeCalledOnce();
-        $this->userProphecy->setAddress(DataFixtures::USER_ADDRESS)->shouldBeCalledOnce();
+        $this->mockFindUserReturningParameterValue($user);
 
         $this->mockGetManagerForUserForBeCalledOnce();
 
-        $this->entityManagerProphecy->persist($this->userProphecy)->shouldBeCalledOnce();
+        $this->entityManagerProphecy->persist($user)->shouldBeCalledOnce();
 
         $this->mockFlushForBeCalledOnce();
 
@@ -105,7 +100,7 @@ class UserServiceTest extends ServiceTestCase
     /** @throws  Exception */
     public function testShouldCreateAndReturnUserIfNotExists()
     {
-        $this->mockFindUserWillReturnParameterValue(null);
+        $this->mockFindUserReturningParameterValue(null);
 
         $this->userProphecy->getPhone()->shouldNotBeCalled();
         $this->userProphecy->getAddress()->shouldNotBeCalled();
@@ -128,12 +123,12 @@ class UserServiceTest extends ServiceTestCase
         $this->tryActualizeUserWithValidData();
     }
 
-    public function mockFindUserWillReturnParameterValue(?ObjectProphecy $returns)
+    public function mockFindUserReturningParameterValue($return)
     {
         $this->userRepositoryProphecy
             ->findOneByEmail(DataFixtures::USER_EMAIL)
             ->shouldBeCalledOnce()
-            ->willReturn($returns);
+            ->willReturn($return);
     }
 
     public function mockGetManagerForUserForBeCalledOnce()

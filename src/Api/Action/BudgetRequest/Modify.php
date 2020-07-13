@@ -4,6 +4,7 @@
 namespace App\Api\Action\BudgetRequest;
 
 
+use App\Message\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
 use App\Entity\BudgetRequest;
@@ -41,18 +42,20 @@ class Modify extends RequestManager
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(int $budgetRequestId, Request $request):JsonResponse
+    public function __invoke($budgetRequestId, Request $request):JsonResponse
     {
-        $responseMessage = 'Solicitud de presupuesto modificada correctamente';
+        $responseMessage = Message::BUDGET_REQUEST_MODIFIED_OK;
         $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
+            $this->isNumericField($budgetRequestId);
+
             $jsonData = $this->getJsonData($request);
 
             if(null == $jsonData)
             {
-                throw new Exception('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
+                throw new Exception(Message::BUDGET_REQUEST_INVALID_JSON_FOR_MODIFY, JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
@@ -60,14 +63,15 @@ class Modify extends RequestManager
             if (null == $budgetRequest)
             {
                 throw new Exception(
-                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST);
+                    Message::messageReplace('id', $budgetRequestId, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
+                    JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->getPayload($jsonData, $budgetRequest);
 
-            if($this->status != Status::STATUS_PENDING || $budgetRequest->getStatus() != Status::STATUS_PENDING)
+            if($budgetRequest->getStatus() != Status::STATUS_PENDING)
             {
-                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
+                throw new Exception(Message::BUDGET_REQUEST_MODIFY_NOT_ALLOWED, JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->budgetRequestService->modifyBudgetRequest(
@@ -99,14 +103,16 @@ class Modify extends RequestManager
         $this->description = $this->getFieldData(
             $arrayData,
             'description',
-            $actualBudgetRequest->getDescription()
+            $actualBudgetRequest->getDescription(),
+            true
         );
+
         $this->categoryId =$this->getFieldData(
             $arrayData,
             'category_id',
             $this->getCategoryId($actualBudgetRequest)
         );
 
-        $this->status = $this->getFieldData($arrayData, 'status', $actualBudgetRequest->getStatus());
+        $this->status = $actualBudgetRequest->getStatus();
     }
 }

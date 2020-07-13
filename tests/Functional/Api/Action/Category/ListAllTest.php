@@ -4,11 +4,11 @@
 namespace App\Tests\Functional\Api\Action\Category;
 
 use App\Api\EndpointUri;
-use App\Tests\Functional\FunctionalWebTestCase;
+use App\Tests\Functional\Api\Action\ActionWebTestCase;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class ListAllTest extends FunctionalWebTestCase
+class ListAllTest extends ActionWebTestCase
 {
     public function setUp()
     {
@@ -17,19 +17,19 @@ class ListAllTest extends FunctionalWebTestCase
 
     public function testListAllGetsAllCategoriesWhenCategoryTableIsEmpty()
     {
-        $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->doRequest('GET', EndpointUri::URI_CATEGORY_LIST);
 
         $responseData = json_decode($response->getContent(), true);
 
         $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertNotEmpty($responseData);
+        $this->assertEmpty($responseData);
     }
 
     public function testListAllGetsAllCategoriesWhenCategoriesLoaded()
     {
         $this->loadFixtures();
 
-        $response = $this->sendRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->doRequest('GET', EndpointUri::URI_CATEGORY_LIST);
 
         $responseData = json_decode($response->getContent(), true);
 

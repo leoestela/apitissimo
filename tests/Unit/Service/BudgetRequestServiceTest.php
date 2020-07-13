@@ -60,53 +60,17 @@ class BudgetRequestServiceTest extends ServiceTestCase
     {
         $this->aExceptionIsExpected();
 
+        $user = new User(DataFixtures::USER_EMAIL, DataFixtures::USER_PHONE,DataFixtures::USER_ADDRESS);
+
+        $this->userServiceProphecy
+            ->actualizeUser(DataFixtures::USER_EMAIL, DataFixtures::USER_PHONE,DataFixtures::USER_ADDRESS)
+            ->shouldBeCalledOnce()->willReturn($user);
+
         $this->budgetRequestService->createBudgetRequest(
             null,
             '',
             null,
             DataFixtures::USER_EMAIL,
-            DataFixtures::USER_PHONE,
-            DataFixtures::USER_ADDRESS);
-    }
-
-    /** @throws  Exception */
-    public function testShouldThrowExceptionIfEmailIsNullWhenCreate()
-    {
-        $this->aExceptionIsExpected();
-
-        $this->budgetRequestService->createBudgetRequest(
-            null,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            '',
-            DataFixtures::USER_PHONE,
-            DataFixtures::USER_ADDRESS);
-    }
-
-    /** @throws Exception */
-    public function testShouldThrowExceptionIfAddressIsNullWhenCreate()
-    {
-        $this->aExceptionIsExpected();
-
-        $this->budgetRequestService->createBudgetRequest(
-            null,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            DataFixtures::USER_EMAIL,
-            DataFixtures::USER_PHONE,
-            '');
-    }
-
-    /** @throws  Exception */
-    public function testShouldThrowExceptionIfEmailIsNotValidWhenCreate()
-    {
-        $this->aExceptionIsExpected();
-
-        $this->budgetRequestService->createBudgetRequest(
-            null,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            DataFixtures::USER_INVALID_EMAIL,
             DataFixtures::USER_PHONE,
             DataFixtures::USER_ADDRESS);
     }

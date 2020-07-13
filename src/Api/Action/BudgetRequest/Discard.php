@@ -4,6 +4,7 @@
 namespace App\Api\Action\BudgetRequest;
 
 
+use App\Message\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
 use App\Service\BudgetRequestService;
@@ -28,25 +29,28 @@ class Discard extends RequestManager
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(int $budgetRequestId, Request $request):JsonResponse
+    public function __invoke($budgetRequestId, Request $request):JsonResponse
     {
-        $responseMessage = 'Solicitud de presupuesto descartada correctamente';
+        $responseMessage = Message::BUDGET_REQUEST_DISCARD_OK;
         $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
+            $this->isNumericField($budgetRequestId);
+
             $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
 
             if (null == $budgetRequest)
             {
                 throw new Exception(
-                    'Budget request ' . $budgetRequestId . ' not exists', JsonResponse::HTTP_BAD_REQUEST
+                    Message::messageReplace('id', $budgetRequestId, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
+                    JsonResponse::HTTP_BAD_REQUEST
                 );
             }
 
             if($budgetRequest->getStatus() == Status::STATUS_DISCARDED)
             {
-                throw new Exception('Action not allowed', JsonResponse::HTTP_BAD_REQUEST);
+                throw new Exception(Message::BUDGET_REQUEST_DISCARD_NOT_ALLOWED, JsonResponse::HTTP_METHOD_NOT_ALLOWED);
             }
 
             $this->budgetRequestService->modifyBudgetRequest(

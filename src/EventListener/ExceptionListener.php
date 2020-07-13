@@ -15,7 +15,7 @@ class ExceptionListener
     {
         $exception = $event->getException();
 
-        $data = null;
+        $data = [];
 
         if ($exception instanceof HttpExceptionInterface) {
             $data = [

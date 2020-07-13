@@ -9,39 +9,32 @@ use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
 use App\Entity\BudgetRequest;
 use App\Entity\User;
-use App\Service\BudgetRequestService;
 use Exception;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class ModifyTest extends TestCase
+class ModifyTest extends ModifyBudgetRequestTestCase
 {
     /** @var Modify */
     private $action;
-
-    /**
-     * @var ObjectProphecy|BudgetRequestService
-     */
-    private $budgetRequestServiceProphecy;
 
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->budgetRequestServiceProphecy = $this->prophesize(BudgetRequestService::class);
-        $budgetRequestService = $this->budgetRequestServiceProphecy->reveal();
-
-        $this->action = new Modify($budgetRequestService);
+        $this->action = new Modify($this->budgetRequestService);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNull()
     {
         $payload = [];
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
+        $this->doRequest(
+            $this->action,
+            DataFixtures::BUDGET_REQUEST_ID,
+            json_encode($payload),
+            JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNotValid()
@@ -74,21 +67,12 @@ class ModifyTest extends TestCase
             ->shouldBeCalledOnce()
             ->willReturn(null);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_INVALID_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
-    }
-
-    public function testShouldThrowBadRequestExceptionIfReceivesStatusDifferentToPending()
-    {
-        $payload = [
-            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
-            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            'category_id' => DataFixtures::CATEGORY_ID,
-            'status' => Status::STATUS_PUBLISHED
-        ];
-
-        $this->mockFindBudgetRequest();
-
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
+        $this->doRequest(
+            $this->action,
+            DataFixtures::BUDGET_REQUEST_INVALID_ID,
+            json_encode($payload),
+            JsonResponse::HTTP_BAD_REQUEST
+        );
     }
 
     public function testShouldThrowBadRequestExceptionIfActualStatusDifferentToPending()
@@ -99,9 +83,16 @@ class ModifyTest extends TestCase
             'category_id' => DataFixtures::CATEGORY_ID
         ];
 
-        $this->mockFindBudgetRequest(Status::STATUS_PUBLISHED);
+        $budgetRequest = $this->createFakeBudgetRequest(DataFixtures::BUDGET_REQUEST_TITLE, null);
+        $budgetRequest->setStatus(Status::STATUS_PUBLISHED);
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_BAD_REQUEST);
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
+
+        $this->doRequest(
+            $this->action,
+            DataFixtures::BUDGET_REQUEST_ID,
+            json_encode($payload),
+            JsonResponse::HTTP_BAD_REQUEST);
     }
 
     public function testModifyBudgetRequestIfPayloadIsValid()
@@ -111,7 +102,9 @@ class ModifyTest extends TestCase
             'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION
         ];
 
-        $budgetRequest = $this->mockFindBudgetRequest();
+        $budgetRequest = $this->createFakeBudgetRequest(DataFixtures::BUDGET_REQUEST_TITLE, null);
+
+        $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
         try
         {
@@ -128,39 +121,6 @@ class ModifyTest extends TestCase
             $this->fail($exception->getMessage());
         }
 
-        $this->doRequest(DataFixtures::BUDGET_REQUEST_ID, $payload, JsonResponse::HTTP_OK);
-    }
-
-    private function mockFindBudgetRequest(string $status = ''): BudgetRequest
-    {
-        $user = new User(DataFixtures::USER_EMAIL, DataFixtures::USER_EMAIL, DataFixtures::USER_ADDRESS);
-
-        $budgetRequest = new BudgetRequest(
-            DataFixtures::BUDGET_REQUEST_TITLE,
-            DataFixtures::BUDGET_REQUEST_DESCRIPTION,
-            null,
-            $user
-        );
-
-        if(null != $status)
-        {
-            $budgetRequest->setStatus($status);
-        }
-
-        $this->budgetRequestServiceProphecy
-            ->getBudgetRequestById(DataFixtures::BUDGET_REQUEST_ID)
-            ->shouldBeCalledOnce()
-            ->willReturn($budgetRequest);
-
-        return $budgetRequest;
-    }
-
-    private function doRequest(int $budgetRequestId, array $payload, int $expectedStatusCode)
-    {
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
-
-        $response = $this->action->__invoke($budgetRequestId, $request);
-
-        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, json_encode($payload), JsonResponse::HTTP_OK);
     }
 }

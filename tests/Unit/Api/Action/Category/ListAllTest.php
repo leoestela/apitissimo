@@ -17,9 +17,6 @@ class ListAllTest extends TestCase
     /** @var ObjectProphecy|CategoryRepository */
     private $categoryRepositoryProphecy;
 
-    /** @var Serializer */
-    private $serializerProphecy;
-
     /** @var ListAll */
     private $action;
 
@@ -30,8 +27,8 @@ class ListAllTest extends TestCase
         $this->categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepository = $this->categoryRepositoryProphecy->reveal();
 
-        $this->serializerProphecy = $this->prophesize(Serializer::class);
-        $serializer = $this->serializerProphecy->reveal();
+        $serializerProphecy = $this->prophesize(Serializer::class);
+        $serializer = $serializerProphecy->reveal();
 
         $this->action = new ListAll($categoryRepository, $serializer);
     }

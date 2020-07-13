@@ -5,20 +5,21 @@ namespace App\Tests\Functional\Api\Action\BudgetRequest;
 
 
 use App\Api\EndpointUri;
-use App\Tests\Functional\FunctionalWebTestCase;
+use App\DataFixtures\DataFixtures;
+use App\Tests\Functional\Api\Action\ActionWebTestCase;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class ListPaginatedTest extends FunctionalWebTestCase
+class ListPaginatedTest extends ActionWebTestCase
 {
     public function setUp()
     {
         parent::setUp();
     }
 
-    public function testListAllGetsAllBudgetRequestsWhenBudgetRequestTableIsEmpty()
+    public function testShouldListAllGetsAllBudgetRequestsWhenBudgetRequestTableIsEmpty()
     {
-        $response = $this->sendRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
+        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
 
         $responseData = json_decode($response->getContent(), true);
 
@@ -26,16 +27,46 @@ class ListPaginatedTest extends FunctionalWebTestCase
         $this->assertNotEmpty($responseData);
     }
 
-    public function testListAllGetsAllBudgetRequestsWhenBudgetRequestsLoaded()
+    public function testShouldListAllGetsAllBudgetRequestsWhenBudgetRequestsLoaded()
     {
         $this->loadFixtures();
 
-        $response = $this->sendRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
+        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
         $this->assertNotEmpty($responseData);
+    }
+
+    public function testShouldListAllGetsAllBudgetRequestsForEmailPassedWhenBudgetRequestsLoaded()
+    {
+        $this->loadFixtures();
+
+        $payload = ['email' => DataFixtures::USER_EMAIL];
+
+        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $responseData = json_decode($response->getContent(), true);
+
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
+        $this->assertNotEmpty($responseData);
+    }
+
+    public function testShouldListAllGetsAllBudgetRequestsForEmailAndPaginationParamsPassedWhenBudgetRequestsLoaded()
+    {
+        $this->loadFixtures();
+
+        $payload = ['email' => DataFixtures::USER_EMAIL, 'limit' => 2, 'offset' => 2];
+
+        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $responseData = json_decode($response->getContent(), true);
+
+        $budgetRequestCount = count($responseData['budget_requests']);
+
+        $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals(2, $budgetRequestCount);
     }
 
     /** @throws Exception */

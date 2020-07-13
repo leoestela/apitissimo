@@ -33,11 +33,13 @@ class ListAll extends RequestManager
     {
         $categoryCollection = $this->categoryRepository->findAll();
 
-        $jsonContent = (null !== $categoryCollection)
-            ? $this->serializer->serializeCategoryCollection($categoryCollection) : null;
+        $jsonContent = [];
 
-        $jsonContent = (null == $jsonContent) ? $this->getJsonForEmptyData(200) : $jsonContent;
+        if(null != $categoryCollection)
+        {
+            $jsonContent = $this->serializer->serializeCategoryCollection($categoryCollection);
+        }
 
-        return $this->getJsonResponse($jsonContent, 200);
+        return $this->getJsonResponse($jsonContent, JsonResponse::HTTP_OK);
     }
 }

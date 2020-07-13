@@ -30,9 +30,6 @@ class ListPaginatedTest extends TestCase
     /** @var ObjectProphecy|User */
     private $userProphecy;
 
-    /** @var ObjectProphecy|Serializer */
-    private $serializerProphecy;
-
 
     public function setUp()
     {
@@ -44,8 +41,8 @@ class ListPaginatedTest extends TestCase
         $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
         $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
 
-        $this->serializerProphecy = $this->prophesize(Serializer::class);
-        $serializer = $this->serializerProphecy->reveal();
+        $serializerProphecy = $this->prophesize(Serializer::class);
+        $serializer = $serializerProphecy->reveal();
 
         $this->userProphecy = $this->prophesize(User::class);
 

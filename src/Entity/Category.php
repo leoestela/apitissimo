@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 
+use App\Message\Message;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,18 +20,23 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer", length=50)
-     * @Assert\NotBlank
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=200)
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      max = 200,
+     *      maxMessage = Message::CATEGORY_NAME_MAX_LENGTH)
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=500)
+     * @Assert\Length(
+     *      max = 500,
+     *      maxMessage = Message::CATEGORY_DESCRIPTION_MAX_LENGTH)
      */
     private $description;
 

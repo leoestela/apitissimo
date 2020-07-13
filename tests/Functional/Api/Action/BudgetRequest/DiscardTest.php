@@ -5,11 +5,12 @@ namespace App\Tests\Functional\Api\Action\BudgetRequest;
 
 
 use App\Api\EndpointUri;
-use App\Tests\Functional\FunctionalWebTestCase;
+use App\DataFixtures\DataFixtures;
+use App\Tests\Functional\Api\Action\ActionWebTestCase;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class DiscardTest extends FunctionalWebTestCase
+class DiscardTest extends ActionWebTestCase
 {
     public function setUp()
     {
@@ -18,25 +19,42 @@ class DiscardTest extends FunctionalWebTestCase
         $this->loadFixtures();
     }
 
-    public function testDiscardBudgetRequest()
+    public function testShouldThrowExceptionIfBudgetRequestIdIsNotNumeric()
     {
-        $client = static::createClient();
-        $client->request(
-            'PUT',
-            str_replace('{budgetRequestId}', '1',EndpointUri::URI_BUDGET_REQUEST_DISCARD),
-            [],
-            [],
-            [],
-            null,
-            true);
+        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID));
 
-        echo($client->getResponse()->getContent());
-        $this->assertEquals(JsonResponse::HTTP_OK, $client->getResponse()->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIsBudgetRequestNotExists()
+    {
+        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_INVALID_ID));
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowExceptionIfBudgetRequestIsDiscarded()
+    {
+        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::DISCARDED_BUDGET_REQUEST_ID));
+
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
+    }
+
+    public function testShouldDiscardBudgetRequestIfRequestIsValid()
+    {
+        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_ID));
+
+        $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
 
     /** @throws Exception */
     public function tearDown()
     {
         $this->purge();
+    }
+
+    private function getUri($budgetRequestId): string
+    {
+        return str_replace('{budgetRequestId}', $budgetRequestId, EndpointUri::URI_BUDGET_REQUEST_DISCARD);
     }
 }

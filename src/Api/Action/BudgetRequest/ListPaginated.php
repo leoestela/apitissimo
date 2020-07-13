@@ -94,6 +94,10 @@ class ListPaginated extends RequestManager
         return $this->getJsonResponse($responseContent, $responseCode);
     }
 
+    /**
+     * @param array $jsonData
+     * @throws Exception
+     */
     private function getPayload(array $jsonData)
     {
         $this->email = (null != $jsonData) ? $this->getFieldData($jsonData, 'email', null) : null;
@@ -103,7 +107,6 @@ class ListPaginated extends RequestManager
 
     /**
      * @param string $email
-     * @return User
      * @throws Exception
      */
     private function getUserByEmail(string $email)
