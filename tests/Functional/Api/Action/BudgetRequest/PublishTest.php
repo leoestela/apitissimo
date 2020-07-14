@@ -59,34 +59,34 @@ class PublishTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIsBudgetRequestIsNotPending()
+    public function testShouldThrowNotAllowedExceptionIsBudgetRequestIsNotPending()
     {
         $response = $this->doRequest(
             'PUT',
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::DISCARDED_BUDGET_REQUEST_ID)
         );
 
-        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIsBudgetRequestIfTitleIsNull()
+    public function testShouldThrowNotAllowedExceptionIfBudgetRequestIfTitleIsNull()
     {
         $response = $this->doRequest(
             'PUT',
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_WITHOUT_TITLE_ID)
         );
 
-        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIsBudgetRequestIfCategoryIsNull()
+    public function testShouldThrowNotAllowedExceptionIfBudgetRequestIfCategoryIsNull()
     {
         $response = $this->doRequest(
             'PUT',
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_WITHOUT_CATEGORY_ID)
         );
 
-        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
     public function testShouldPublishBudgetRequestIfRequestIsValid()

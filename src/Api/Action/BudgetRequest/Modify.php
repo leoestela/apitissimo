@@ -4,6 +4,9 @@
 namespace App\Api\Action\BudgetRequest;
 
 
+use App\Exception\BudgetRequest\BudgetRequestActionNotAllowedException;
+use App\Exception\BudgetRequest\BudgetRequestNotExistsException;
+use App\Exception\Common\InvalidJsonException;
 use App\Message\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
@@ -55,23 +58,21 @@ class Modify extends RequestManager
 
             if(null == $jsonData)
             {
-                throw new Exception(Message::BUDGET_REQUEST_INVALID_JSON_FOR_MODIFY, JsonResponse::HTTP_BAD_REQUEST);
+                throw InvalidJsonException::throwException();
             }
 
             $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
 
             if (null == $budgetRequest)
             {
-                throw new Exception(
-                    Message::messageReplace('id', $budgetRequestIdIntValue, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
-                    JsonResponse::HTTP_BAD_REQUEST);
+                throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
             }
 
             $this->getPayload($jsonData, $budgetRequest);
 
             if($budgetRequest->getStatus() != Status::STATUS_PENDING)
             {
-                throw new Exception(Message::BUDGET_REQUEST_MODIFY_NOT_ALLOWED, JsonResponse::HTTP_BAD_REQUEST);
+                throw BudgetRequestActionNotAllowedException::withAction('Modify');
             }
 
             $this->budgetRequestService->modifyBudgetRequest(

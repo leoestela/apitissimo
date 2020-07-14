@@ -49,7 +49,7 @@ class DiscardTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIsBudgetRequestNotExists()
+    public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExists()
     {
         $response = $this->doRequest(
             'PUT',
@@ -59,7 +59,7 @@ class DiscardTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testShouldThrowExceptionIfBudgetRequestIsDiscarded()
+    public function testShouldThrowNotAllowedExceptionIfBudgetRequestIsDiscarded()
     {
         $response = $this->doRequest(
             'PUT',

@@ -5,6 +5,9 @@ namespace App\Api;
 
 
 use App\Entity\BudgetRequest;
+use App\Exception\Common\InvalidJsonException;
+use App\Exception\Common\RequiredFieldMissingException;
+use App\Exception\Common\InvalidIdFormatException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +25,7 @@ class RequestManager
 
         if(null != $request->getContent() && JSON_ERROR_NONE != json_last_error())
         {
-            throw new Exception('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
+            throw InvalidJsonException::throwException();
         }
 
         return $jsonData;
@@ -46,7 +49,7 @@ class RequestManager
 
         if($required && null == $fieldData)
         {
-            throw new Exception('Required field missing', JsonResponse::HTTP_BAD_REQUEST);
+            throw RequiredFieldMissingException::throwException();
         }
 
         return $fieldData;
@@ -87,7 +90,7 @@ class RequestManager
 
         if(null != $valuePassed && (!is_numeric($valuePassed) || $valuePassed != strval($intValue) || $intValue < 0))
         {
-            throw new Exception ('Field must be a valid positive integer', JsonResponse::HTTP_BAD_REQUEST);
+            throw InvalidIdFormatException::withValue($valuePassed);
         }
 
         return $intValue;

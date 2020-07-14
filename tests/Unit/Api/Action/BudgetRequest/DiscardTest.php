@@ -30,7 +30,7 @@ class DiscardTest extends ModifyBudgetRequestTestCase
         $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_INVALID_ID, null, JsonResponse::HTTP_BAD_REQUEST);
     }
 
-    public function testShouldThrowBadRequestExceptionIfActualStatusIsDiscarded()
+    public function testShouldThrowNotAllowedExceptionIfActualStatusIsDiscarded()
     {
         $budgetRequest = $this->createFakeBudgetRequest(DataFixtures::BUDGET_REQUEST_TITLE, null);
 

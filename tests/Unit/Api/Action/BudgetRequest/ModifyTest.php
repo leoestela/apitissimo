@@ -75,7 +75,7 @@ class ModifyTest extends ModifyBudgetRequestTestCase
         );
     }
 
-    public function testShouldThrowBadRequestExceptionIfActualStatusDifferentToPending()
+    public function testShouldThrowNotAllowedIfActualStatusDifferentToPending()
     {
         $payload = [
             'title' => DataFixtures::BUDGET_REQUEST_TITLE,
@@ -92,7 +92,7 @@ class ModifyTest extends ModifyBudgetRequestTestCase
             $this->action,
             DataFixtures::BUDGET_REQUEST_ID,
             json_encode($payload),
-            JsonResponse::HTTP_BAD_REQUEST);
+            JsonResponse::HTTP_METHOD_NOT_ALLOWED);
     }
 
     public function testModifyBudgetRequestIfPayloadIsValid()

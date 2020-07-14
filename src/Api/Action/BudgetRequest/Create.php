@@ -3,6 +3,7 @@
 
 namespace App\Api\Action\BudgetRequest;
 
+use App\Exception\Common\InvalidJsonException;
 use App\Message\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
@@ -57,7 +58,7 @@ class Create extends RequestManager
 
             if(null == $jsonData)
             {
-                throw new Exception(Message::BUDGET_REQUEST_INVALID_JSON_FOR_CREATE, JsonResponse::HTTP_BAD_REQUEST);
+                throw InvalidJsonException::throwException();
             }
 
             $this->getPayload($jsonData);

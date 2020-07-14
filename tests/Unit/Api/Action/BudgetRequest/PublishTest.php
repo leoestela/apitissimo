@@ -43,7 +43,7 @@ class PublishTest extends ModifyBudgetRequestTestCase
         $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_INVALID_ID, null, JsonResponse::HTTP_BAD_REQUEST);
     }
 
-    public function testShouldThrowBadRequestExceptionIfActualStatusIsNotPending()
+    public function testShouldThrowNotAllowedExceptionIfActualStatusIsNotPending()
     {
         $budgetRequest = $this->createFakeBudgetRequest(
             DataFixtures::BUDGET_REQUEST_TITLE,
@@ -54,19 +54,19 @@ class PublishTest extends ModifyBudgetRequestTestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_BAD_REQUEST);
+        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_METHOD_NOT_ALLOWED);
     }
 
-    public function testShouldThrowBadRequestExceptionIfActualTitleIsNull()
+    public function testShouldThrowNotAllowedExceptionIfActualTitleIsNull()
     {
         $budgetRequest = $this->createFakeBudgetRequest(null, DataFixtures::CATEGORY_NAME);
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_BAD_REQUEST);
+        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_METHOD_NOT_ALLOWED);
     }
 
-    public function testShouldThrowBadRequestExceptionIfActualCategoryIsNull()
+    public function testShouldThrowNotAllowedExceptionIfActualCategoryIsNull()
     {
         $budgetRequest = $this->createFakeBudgetRequest(
             DataFixtures::BUDGET_REQUEST_TITLE,
@@ -77,7 +77,7 @@ class PublishTest extends ModifyBudgetRequestTestCase
 
         $this->mockGetBudgetRequest(DataFixtures::BUDGET_REQUEST_ID, $budgetRequest);
 
-        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_BAD_REQUEST);
+        $this->doRequest($this->action, DataFixtures::BUDGET_REQUEST_ID, null, JsonResponse::HTTP_METHOD_NOT_ALLOWED);
     }
 
     public function testShouldPublishBudgetRequestIfActualStatusIsPending()

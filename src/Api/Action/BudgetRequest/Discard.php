@@ -4,6 +4,8 @@
 namespace App\Api\Action\BudgetRequest;
 
 
+use App\Exception\BudgetRequest\BudgetRequestActionNotAllowedException;
+use App\Exception\BudgetRequest\BudgetRequestNotExistsException;
 use App\Message\Message;
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
@@ -42,15 +44,12 @@ class Discard extends RequestManager
 
             if (null == $budgetRequest)
             {
-                throw new Exception(
-                    Message::messageReplace('id', $budgetRequestIdIntValue, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
-                    JsonResponse::HTTP_BAD_REQUEST
-                );
+                throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
             }
 
             if($budgetRequest->getStatus() == Status::STATUS_DISCARDED)
             {
-                throw new Exception(Message::BUDGET_REQUEST_DISCARD_NOT_ALLOWED, JsonResponse::HTTP_METHOD_NOT_ALLOWED);
+                throw BudgetRequestActionNotAllowedException::withAction('Discard');
             }
 
             $this->budgetRequestService->modifyBudgetRequest(

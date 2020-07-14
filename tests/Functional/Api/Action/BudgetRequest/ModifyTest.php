@@ -84,7 +84,7 @@ class ModifyTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIsBudgetRequestIsNotPending()
+    public function testShouldThrowNotAllowedExceptionIsBudgetRequestIsNotPending()
     {
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
@@ -94,7 +94,7 @@ class ModifyTest extends ActionWebTestCase
             $payload
         );
 
-        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
     public function testShouldThrowBadRequestExceptionIfTitlePassedIsTooLong()
@@ -188,7 +188,7 @@ class ModifyTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testShouldThrowBadRequestExceptionIfSameInfoPassed()
+    public function testShouldThrowExceptionIfSameInfoPassed()
     {
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_TITLE];
 
@@ -198,7 +198,7 @@ class ModifyTest extends ActionWebTestCase
             $payload
         );
 
-        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
     public function testShouldModifyBudgetRequestIfBudgetRequestExistsAndPayloadIsValid()

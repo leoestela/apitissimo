@@ -4,8 +4,9 @@
 namespace App\Service;
 
 
+use App\Exception\Common\ConstraintErrorException;
+use App\Exception\Common\RequiredFieldMissingException;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validation;
 
 class ValidationService
@@ -18,35 +19,8 @@ class ValidationService
     {
         if (null == $requiredField)
         {
-            throw new Exception('Required field not informed', JsonResponse::HTTP_BAD_REQUEST);
+            throw RequiredFieldMissingException::throwException();
         }
-    }
-
-    /**
-     * @param string $email
-     * @throws Exception
-     */
-    protected function isValidEmail(string $email)
-    {
-        if (false == filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
-            throw new Exception('Invalid e-mail', JsonResponse::HTTP_BAD_REQUEST);
-        }
-    }
-
-    /**
-     * @param string $email
-     * @param int $phone
-     * @param string $address
-     * @throws Exception
-     */
-    protected function userValidData(string $email, int $phone, string $address)
-    {
-        $this->requiredFieldInformed($email);
-        $this->requiredFieldInformed($phone);
-        $this->requiredFieldInformed($address);
-
-        $this->isValidEmail($email);
     }
 
     /**
@@ -61,7 +35,7 @@ class ValidationService
 
         if (count($violations) >0)
         {
-            throw new Exception($violations[0]->getMessage(), JsonResponse::HTTP_BAD_REQUEST);
+            throw ConstraintErrorException::withError($violations[0]->getMessage());
         }
     }
 }

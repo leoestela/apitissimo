@@ -5,6 +5,8 @@ namespace App\Service;
 
 use App\Entity\BudgetRequest;
 use App\Entity\Category;
+use App\Exception\BudgetRequest\BudgetRequestNoChangesPassedException;
+use App\Exception\Category\CategoryNotExistsException;
 use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -89,7 +91,7 @@ class BudgetRequestService extends ValidationService
 
         if($this->sameBudgetRequestInfo($budgetRequest, $title, $description, $categoryId, $status))
         {
-            throw new Exception('No changes made', JsonResponse::HTTP_BAD_REQUEST);
+            throw BudgetRequestNoChangesPassedException::throwException();
         }
 
         if(null != $categoryId && $categoryId != $this->getActualCategoryId($budgetRequest))
@@ -121,7 +123,7 @@ class BudgetRequestService extends ValidationService
 
         if (null == $category)
         {
-            throw new Exception('Category ' . $categoryId . ' does not exists', JsonResponse::HTTP_BAD_REQUEST);
+            throw CategoryNotExistsException::withCategoryId($categoryId);
         }
 
         return $category;

@@ -5,6 +5,8 @@ namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
+use App\Exception\BudgetRequest\BudgetRequestActionNotAllowedException;
+use App\Exception\BudgetRequest\BudgetRequestNotExistsException;
 use App\Message\Message;
 use App\Service\BudgetRequestService;
 use Exception;
@@ -41,9 +43,7 @@ class Publish extends RequestManager
 
             if (null == $budgetRequest)
             {
-                throw new Exception(
-                    Message::messageReplace('id', $budgetRequestIdIntValue, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
-                    JsonResponse::HTTP_BAD_REQUEST);
+                throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
             }
 
             if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
@@ -51,7 +51,7 @@ class Publish extends RequestManager
                 null == $budgetRequest->getCategory()
             )
             {
-                throw new Exception(Message::BUDGET_REQUEST_PUBLISH_NOT_ALLOWED, JsonResponse::HTTP_BAD_REQUEST);
+                throw BudgetRequestActionNotAllowedException::withAction('Publish');
             }
 
             $categoryId = $budgetRequest->getCategory()->getId();
