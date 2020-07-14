@@ -21,28 +21,58 @@ class DiscardTest extends ActionWebTestCase
 
     public function testShouldThrowExceptionIfBudgetRequestIdIsNotNumeric()
     {
-        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID));
+        $response = $this->doRequest(
+            'PUT',
+            EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID)
+        );
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowExceptionIfBudgetRequestIdIsNegative()
+    {
+        $response = $this->doRequest(
+            'PUT',
+            EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_NEGATIVE_ID)
+        );
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowExceptionIfBudgetRequestIdIsFloat()
+    {
+        $response = $this->doRequest(
+            'PUT',
+            EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_FLOAT_ID)
+        );
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldThrowBadRequestExceptionIsBudgetRequestNotExists()
     {
-        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_INVALID_ID));
+        $response = $this->doRequest(
+            'PUT',
+            EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_INVALID_ID)
+        );
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldThrowExceptionIfBudgetRequestIsDiscarded()
     {
-        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::DISCARDED_BUDGET_REQUEST_ID));
+        $response = $this->doRequest(
+            'PUT',
+            EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::DISCARDED_BUDGET_REQUEST_ID)
+        );
 
         $this->assertEquals(JsonResponse::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
     }
 
     public function testShouldDiscardBudgetRequestIfRequestIsValid()
     {
-        $response = $this->doRequest('PUT', $this->getUri(DataFixtures::BUDGET_REQUEST_ID));
+        $response =
+            $this->doRequest('PUT', EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_ID));
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
@@ -51,10 +81,5 @@ class DiscardTest extends ActionWebTestCase
     public function tearDown()
     {
         $this->purge();
-    }
-
-    private function getUri($budgetRequestId): string
-    {
-        return str_replace('{budgetRequestId}', $budgetRequestId, EndpointUri::URI_BUDGET_REQUEST_DISCARD);
     }
 }

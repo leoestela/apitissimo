@@ -49,7 +49,7 @@ class Modify extends RequestManager
 
         try
         {
-            $this->isNumericField($budgetRequestId);
+            $budgetRequestIdIntValue = $this->valueToInteger($budgetRequestId);
 
             $jsonData = $this->getJsonData($request);
 
@@ -58,12 +58,12 @@ class Modify extends RequestManager
                 throw new Exception(Message::BUDGET_REQUEST_INVALID_JSON_FOR_MODIFY, JsonResponse::HTTP_BAD_REQUEST);
             }
 
-            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestId);
+            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
 
             if (null == $budgetRequest)
             {
                 throw new Exception(
-                    Message::messageReplace('id', $budgetRequestId, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
+                    Message::messageReplace('id', $budgetRequestIdIntValue, Message::BUDGET_REQUEST_ID_NOT_EXISTS),
                     JsonResponse::HTTP_BAD_REQUEST);
             }
 
@@ -107,10 +107,8 @@ class Modify extends RequestManager
             true
         );
 
-        $this->categoryId =$this->getFieldData(
-            $arrayData,
-            'category_id',
-            $this->getCategoryId($actualBudgetRequest)
+        $this->categoryId = $this->valueToInteger(
+            $this->getFieldData($arrayData, 'category_id', $this->getCategoryId($actualBudgetRequest))
         );
 
         $this->status = $actualBudgetRequest->getStatus();

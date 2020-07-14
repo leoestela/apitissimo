@@ -87,18 +87,15 @@ class Create extends RequestManager
     {
         $this->title = $this->getFieldData($jsonData, 'title',null);
         $this->description = $this->getFieldData($jsonData, 'description', null, true);
-        $this->categoryId = $this->getFieldData($jsonData,'category_id', null);
+        $this->categoryId = $this->valueToInteger($this->getFieldData($jsonData,'category_id', null));
 
         $userData = $this->getArrayInArrayData($jsonData, 'user_data', true);
 
         if(null != $userData)
         {
             $this->userEmail = $this->getFieldData($userData, 'email', null, true);
-            $this->userPhone = $this->getFieldData($userData, 'phone', null, true);
+            $this->userPhone = $this->valueToInteger($this->getFieldData($userData, 'phone', null, true));
             $this->userAddress = $this->getFieldData($userData, 'address', null, true);
         }
-
-        $this->isNumericField($this->categoryId);
-        $this->isNumericField($this->userPhone);
     }
 }

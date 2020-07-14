@@ -17,6 +17,19 @@ class ListPaginatedTest extends ActionWebTestCase
         parent::setUp();
     }
 
+    public function testShouldThrowBadRequestExceptionIfEmailIsNotValid()
+    {
+        $this->loadFixtures();
+
+        $payload = ['email' => DataFixtures::USER_INVALID_EMAIL];
+
+        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $responseData = json_decode($response->getContent(), true);
+
+        $this->assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testShouldListAllGetsAllBudgetRequestsWhenBudgetRequestTableIsEmpty()
     {
         $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST);

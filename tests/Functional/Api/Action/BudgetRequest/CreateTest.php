@@ -19,6 +19,24 @@ class CreateTest extends ActionWebTestCase
         $this->loadFixtures();
     }
 
+    public function testShouldThrowBadRequestExceptionIfTitleIsTooLong()
+    {
+        $payload = [
+            'title' => DataFixtures::TOO_LONG_TEXT,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testShouldThrowBadRequestExceptionIfDescriptionIsMissing()
     {
         $payload = [
@@ -76,7 +94,7 @@ class CreateTest extends ActionWebTestCase
     {
         $payload = [
             'title' => DataFixtures::BUDGET_REQUEST_TITLE,
-            'description' => DataFixtures::BUDGET_REQUEST_TOO_LONG_DESCRIPTION,
+            'description' => DataFixtures::TOO_LONG_TEXT,
             'category_id' => DataFixtures::CATEGORY_ID,
             'user_data' => [
                 'email' => DataFixtures::USER_EMAIL,
@@ -96,6 +114,42 @@ class CreateTest extends ActionWebTestCase
             'title' => DataFixtures::BUDGET_REQUEST_TITLE,
             'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
             'category_id' => DataFixtures::CATEGORY_NON_NUMERIC_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfCategoryIdIsNegativeInteger()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_NEGATIVE_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfCategoryIdIsFloat()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_FLOAT_ID,
             'user_data' => [
                 'email' => DataFixtures::USER_EMAIL,
                 'phone' => DataFixtures::USER_PHONE,
@@ -216,6 +270,42 @@ class CreateTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
+    public function testShouldThrowBadRequestExceptionIfUserEmailIsTooLong()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::TOO_LONG_TEXT,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserEmailIsNotValid()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_INVALID_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testShouldThrowBadRequestExceptionIfUserPhoneIsMissing()
     {
         $payload = [
@@ -287,6 +377,60 @@ class CreateTest extends ActionWebTestCase
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
+    public function testShouldThrowBadRequestExceptionIfUserPhoneIsNegativeInteger()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE_AS_NEGATIVE_INTEGER,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserPhoneIsFloat()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE_AS_FLOAT,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserPhoneIsTooLong()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::TOO_LONG_INTEGER,
+                'address' => DataFixtures::USER_ADDRESS
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
     public function testShouldThrowBadRequestExceptionIfUserAddressIsMissing()
     {
         $payload = [
@@ -332,6 +476,24 @@ class CreateTest extends ActionWebTestCase
                 'email' => DataFixtures::USER_EMAIL,
                 'phone' => DataFixtures::USER_PHONE,
                 'address' => ''
+            ]
+        ];
+
+        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+
+        $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testShouldThrowBadRequestExceptionIfUserAddressIsTooLong()
+    {
+        $payload = [
+            'title' => DataFixtures::BUDGET_REQUEST_TITLE,
+            'description' => DataFixtures::BUDGET_REQUEST_DESCRIPTION,
+            'category_id' => DataFixtures::CATEGORY_ID,
+            'user_data' => [
+                'email' => DataFixtures::USER_EMAIL,
+                'phone' => DataFixtures::USER_PHONE,
+                'address' => DataFixtures::TOO_LONG_TEXT
             ]
         ];
 

@@ -77,15 +77,20 @@ class RequestManager
     }
 
     /**
-     * @param $field
+     * @param $valuePassed
+     * @return int
      * @throws Exception
      */
-    protected function isNumericField($field)
+    protected function valueToInteger($valuePassed): ?int
     {
-        if(null != $field && !is_numeric($field))
+        $intValue = (null != $valuePassed) ? intval($valuePassed) : null;
+
+        if(null != $valuePassed && (!is_numeric($valuePassed) || $valuePassed != strval($intValue) || $intValue < 0))
         {
-            throw new Exception('Field with value ' . $field . ' must be an integer', JsonResponse::HTTP_BAD_REQUEST);
+            throw new Exception ('Field must be a valid positive integer', JsonResponse::HTTP_BAD_REQUEST);
         }
+
+        return $intValue;
     }
 
     protected function transformResponseToArray(string $message, int $code): array
