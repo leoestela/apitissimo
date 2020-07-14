@@ -3,10 +3,12 @@
 
 namespace App\Api\Action\BudgetRequest;
 
+
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
 use App\Api\Serializer;
 use App\Entity\User;
+use App\Exception\User\UserNotExistsException;
 use App\Repository\BudgetRequestRepository;
 use App\Service\UserService;
 use Exception;
@@ -115,7 +117,7 @@ class ListPaginated extends RequestManager
 
         if(null != $email && null == $this->user)
         {
-            throw new Exception('User ' . 'not exists', JsonResponse::HTTP_BAD_REQUEST);
+            throw UserNotExistsException::withUserEmail($email);
         }
     }
 }

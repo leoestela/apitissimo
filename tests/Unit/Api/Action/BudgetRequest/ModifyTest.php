@@ -7,8 +7,6 @@ namespace App\Tests\Unit\Api\Action\BudgetRequest;
 use App\Api\Action\BudgetRequest\Modify;
 use App\Api\Action\BudgetRequest\Status;
 use App\DataFixtures\DataFixtures;
-use App\Entity\BudgetRequest;
-use App\Entity\User;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

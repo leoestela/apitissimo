@@ -11,7 +11,6 @@ use App\Repository\BudgetRequestRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BudgetRequestService extends ValidationService
 {
