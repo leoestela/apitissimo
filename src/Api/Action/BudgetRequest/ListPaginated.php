@@ -72,10 +72,9 @@ class ListPaginated extends RequestManager
                 $this->getUserByEmail($this->email);
             }
 
-            $criteria = (null != $this->user) ? ['user_id' => $this->user->getId()] : [];
+            $criteria = (null != $this->user) ? ['user' => $this->user->getId()] : [];
 
-            $budgetRepositoryCollection =
-                $this->budgetRequestRepository->findByWithPagination($criteria, null, $this->limit, $this->offset);
+            $budgetRepositoryCollection = $this->budgetRequestRepository->findByWithPagination($criteria, null, $this->limit, $this->offset);
 
             if(null != $budgetRepositoryCollection)
             {
@@ -90,7 +89,6 @@ class ListPaginated extends RequestManager
 
         $responseContent = (null == $responseMessage)
             ? $jsonContent : $this->transformResponseToArray($responseMessage, $responseCode);
-
         $responseContent = (null == $responseContent) ? $this->getJsonForEmptyData($responseCode) : $responseContent;
 
         return $this->getJsonResponse($responseContent, $responseCode);

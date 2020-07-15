@@ -22,6 +22,6 @@ class BudgetRequestRepository extends ServiceEntityRepository
 
     public function findByWithPagination(array $criteria, ?array $orderBy, ?int $limit, ?int $offset)
     {
-        return parent::findBy([], null, $limit, $offset);
+        return parent::findBy($criteria, $orderBy, $limit, $offset);
     }
 }

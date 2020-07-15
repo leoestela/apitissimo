@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserNotExistsException extends Exception
 {
-    private const MESSAGE = 'User with ID %s not exists';
+    private const MESSAGE = 'User with email %s not exists';
 
     /**
      * @param $email
