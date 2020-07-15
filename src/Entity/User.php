@@ -134,4 +134,16 @@ class User
     {
         return $this->budgetRequests;
     }
+
+    public function serialize(): array
+    {
+        return array(
+            'id' => $this->id,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'address' => $this->address,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
+        );
+    }
 }

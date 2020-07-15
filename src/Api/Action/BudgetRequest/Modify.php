@@ -34,6 +34,9 @@ class Modify extends RequestManager
     /** @var BudgetRequestService */
     private $budgetRequestService;
 
+    /** @var BudgetRequest */
+    private $budgetRequest;
+
 
     public function __construct(BudgetRequestService $budgetRequestService)
     {
@@ -52,31 +55,15 @@ class Modify extends RequestManager
 
         try
         {
-            $budgetRequestIdIntValue = $this->valueToInteger($budgetRequestId);
+            $this->getRequestInfo($budgetRequestId, $request);
 
-            $jsonData = $this->getJsonData($request);
-
-            if(null == $jsonData)
-            {
-                throw InvalidJsonException::throwException();
-            }
-
-            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
-
-            if (null == $budgetRequest)
-            {
-                throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
-            }
-
-            $this->getPayload($jsonData, $budgetRequest);
-
-            if($budgetRequest->getStatus() != Status::STATUS_PENDING)
+            if($this->budgetRequest->getStatus() != Status::STATUS_PENDING)
             {
                 throw BudgetRequestActionNotAllowedException::withAction('Modify');
             }
 
             $this->budgetRequestService->modifyBudgetRequest(
-                $budgetRequest,
+                $this->budgetRequest,
                 $this->title,
                 $this->description,
                 $this->categoryId,
@@ -90,6 +77,34 @@ class Modify extends RequestManager
         }
 
         return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+    }
+
+    /**
+     * @param $budgetRequestId
+     * @param Request $request
+     * @throws BudgetRequestNotExistsException
+     * @throws InvalidJsonException
+     * @throws Exception
+     */
+    private function getRequestInfo($budgetRequestId, Request $request)
+    {
+        $budgetRequestIdIntValue = $this->valueToInteger($budgetRequestId);
+
+        $jsonData = $this->getJsonData($request);
+
+        if(null == $jsonData)
+        {
+            throw InvalidJsonException::throwException();
+        }
+
+        $this->budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
+
+        if (null == $this->budgetRequest)
+        {
+            throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
+        }
+
+        $this->getPayload($jsonData, $this->budgetRequest);
     }
 
     /**

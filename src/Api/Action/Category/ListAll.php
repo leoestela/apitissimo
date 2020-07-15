@@ -5,7 +5,6 @@ namespace App\Api\Action\Category;
 
 
 use App\Api\RequestManager;
-use App\Api\Serializer;
 use App\Repository\CategoryRepository;
 use App\Api\EndpointUri;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,13 +15,10 @@ class ListAll extends RequestManager
     /** @var CategoryRepository */
     private $categoryRepository;
 
-    /** @var Serializer */
-    private $serializer;
 
-    public function __construct(CategoryRepository $categoryRepository, Serializer $serializer)
+    public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -37,9 +33,20 @@ class ListAll extends RequestManager
 
         if(null != $categoryCollection)
         {
-            $jsonContent = $this->serializer->serializeCategoryCollection($categoryCollection);
+            $jsonContent = $this->serializeCategoryCollection($categoryCollection);
         }
 
         return $this->getJsonResponse($jsonContent, JsonResponse::HTTP_OK);
+    }
+
+    private function serializeCategoryCollection (array $categoryCollection): array
+    {
+        $data = array('categories' => array());
+
+        foreach ($categoryCollection as $category) {
+            $data['categories'][] = $category->serialize();
+        }
+
+        return $data;
     }
 }

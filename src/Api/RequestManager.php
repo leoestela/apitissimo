@@ -101,11 +101,6 @@ class RequestManager
         return array('message' => $message, 'code' => $code);
     }
 
-    protected function getJsonForEmptyData(int $code): array
-    {
-        return array('message' => 'No results found', 'code' => $code);
-    }
-
     protected function getJsonResponse(array $responseContent, int $responseCode): JsonResponse
     {
         $response = new JsonResponse($responseContent, $responseCode);

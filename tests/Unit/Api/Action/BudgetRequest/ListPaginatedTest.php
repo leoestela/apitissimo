@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Api\Action\BudgetRequest;
 
 
 use App\Api\Action\BudgetRequest\ListPaginated;
-use App\Api\Serializer;
 use App\DataFixtures\DataFixtures;
 use App\Entity\User;
 use App\Repository\BudgetRequestRepository;
@@ -41,12 +40,9 @@ class ListPaginatedTest extends TestCase
         $this->budgetRequestRepositoryProphecy = $this->prophesize(BudgetRequestRepository::class);
         $budgetRequestRepository = $this->budgetRequestRepositoryProphecy->reveal();
 
-        $serializerProphecy = $this->prophesize(Serializer::class);
-        $serializer = $serializerProphecy->reveal();
-
         $this->userProphecy = $this->prophesize(User::class);
 
-        $this->action = new ListPaginated($userService, $budgetRequestRepository, $serializer);
+        $this->action = new ListPaginated($userService, $budgetRequestRepository);
     }
 
     public function testShouldThrowBadRequestExceptionIfJsonDataIsNotValid()

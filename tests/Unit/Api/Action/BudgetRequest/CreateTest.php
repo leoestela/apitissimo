@@ -5,10 +5,7 @@ namespace App\Tests\Unit\Api\Action\BudgetRequest;
 
 
 use App\Api\Action\BudgetRequest\Create;
-use App\DataFixtures\BudgetRequestFixtures;
-use App\DataFixtures\CategoryFixtures;
 use App\DataFixtures\DataFixtures;
-use App\DataFixtures\UserFixtures;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

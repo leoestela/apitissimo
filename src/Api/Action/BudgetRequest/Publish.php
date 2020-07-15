@@ -11,13 +11,15 @@ use App\Message\Message;
 use App\Service\BudgetRequestService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Publish extends RequestManager
 {
     /** @var BudgetRequestService */
     private $budgetRequestService;
+
+    /** @var BudgetRequest */
+    private $budgetRequest;
 
 
     public function __construct(BudgetRequestService $budgetRequestService)
@@ -27,39 +29,31 @@ class Publish extends RequestManager
 
     /** @Route(EndpointUri::URI_BUDGET_REQUEST_PUBLISH, methods={"PUT"})
      * @param int $budgetRequestId
-     * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke($budgetRequestId, Request $request):JsonResponse
+    public function __invoke($budgetRequestId):JsonResponse
     {
         $responseMessage = Message::BUDGET_REQUEST_PUBLISHED_OK;
         $responseCode = JsonResponse::HTTP_OK;
 
         try
         {
-            $budgetRequestIdIntValue = $this->valueToInteger($budgetRequestId);
+            $this->getRequestInfo($budgetRequestId);
 
-            $budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
-
-            if (null == $budgetRequest)
-            {
-                throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
-            }
-
-            if($budgetRequest->getStatus() != Status::STATUS_PENDING ||
-                null == $budgetRequest->getTitle() ||
-                null == $budgetRequest->getCategory()
+            if($this->budgetRequest->getStatus() != Status::STATUS_PENDING ||
+                null == $this->budgetRequest->getTitle() ||
+                null == $this->budgetRequest->getCategory()
             )
             {
                 throw BudgetRequestActionNotAllowedException::withAction('Publish');
             }
 
-            $categoryId = $budgetRequest->getCategory()->getId();
+            $categoryId = $this->budgetRequest->getCategory()->getId();
 
             $this->budgetRequestService->modifyBudgetRequest(
-                $budgetRequest,
-                $budgetRequest->getTitle(),
-                $budgetRequest->getDescription(),
+                $this->budgetRequest,
+                $this->budgetRequest->getTitle(),
+                $this->budgetRequest->getDescription(),
                 $categoryId,
                 Status::STATUS_PUBLISHED
             );
@@ -71,5 +65,22 @@ class Publish extends RequestManager
         }
 
         return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+    }
+
+    /**
+     * @param $budgetRequestId
+     * @throws BudgetRequestNotExistsException
+     * @throws Exception
+     */
+    private function getRequestInfo($budgetRequestId)
+    {
+        $budgetRequestIdIntValue = $this->valueToInteger($budgetRequestId);
+
+        $this->budgetRequest = $this->budgetRequestService->getBudgetRequestById($budgetRequestIdIntValue);
+
+        if (null == $this->budgetRequest)
+        {
+            throw BudgetRequestNotExistsException::withBudgetRequestId($budgetRequestId);
+        }
     }
 }

@@ -6,7 +6,6 @@ namespace App\Api\Action\BudgetRequest;
 
 use App\Api\EndpointUri;
 use App\Api\RequestManager;
-use App\Api\Serializer;
 use App\Entity\User;
 use App\Exception\User\UserNotExistsException;
 use App\Repository\BudgetRequestRepository;
@@ -36,18 +35,11 @@ class ListPaginated extends RequestManager
     /** @var int */
     private $offset;
 
-    /** @var Serializer */
-    private $serializer;
 
-
-    public function __construct(
-        UserService $userService,
-        BudgetRequestRepository $budgetRequestRepository,
-        Serializer $serializer)
+    public function __construct(UserService $userService, BudgetRequestRepository $budgetRequestRepository)
     {
         $this->userService = $userService;
         $this->budgetRequestRepository = $budgetRequestRepository;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -63,22 +55,16 @@ class ListPaginated extends RequestManager
 
         try
         {
-            $jsonData = $this->getJsonData($request);
-
-            if(null != $jsonData)
-            {
-                $this->getPayload($jsonData);
-
-                $this->getUserByEmail($this->email);
-            }
+            $this->getRequestInfo($request);
 
             $criteria = (null != $this->user) ? ['user' => $this->user->getId()] : [];
 
-            $budgetRepositoryCollection = $this->budgetRequestRepository->findByWithPagination($criteria, null, $this->limit, $this->offset);
+            $budgetRepositoryCollection =
+                $this->budgetRequestRepository->findByWithPagination($criteria, null, $this->limit, $this->offset);
 
             if(null != $budgetRepositoryCollection)
             {
-                $jsonContent = $this->serializer->serializeBudgetRequestCollection($budgetRepositoryCollection);
+                $jsonContent = $this->serializeBudgetRequestCollection($budgetRepositoryCollection);
             }
         }
         catch (Exception $exception)
@@ -87,11 +73,25 @@ class ListPaginated extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        $responseContent = (null == $responseMessage)
-            ? $jsonContent : $this->transformResponseToArray($responseMessage, $responseCode);
-        $responseContent = (null == $responseContent) ? $this->getJsonForEmptyData($responseCode) : $responseContent;
+        $responseContent = $this->prepareResponseContent($jsonContent, $responseMessage, $responseCode);
 
         return $this->getJsonResponse($responseContent, $responseCode);
+    }
+
+    /**
+     * @param Request $request
+     * @throws Exception
+     */
+    private function getRequestInfo(Request $request)
+    {
+        $jsonData = $this->getJsonData($request);
+
+        if(null != $jsonData)
+        {
+            $this->getPayload($jsonData);
+
+            $this->getUserByEmail($this->email);
+        }
     }
 
     /**
@@ -117,5 +117,31 @@ class ListPaginated extends RequestManager
         {
             throw UserNotExistsException::withUserEmail($email);
         }
+    }
+
+    private function serializeBudgetRequestCollection (array $budgetRequestCollection): array
+    {
+        $data = array('budget_requests' => array());
+
+        foreach ($budgetRequestCollection as $budgetRequest) {
+            $data['budget_requests'][] = $budgetRequest->serialize();
+        }
+
+        return $data;
+    }
+
+    private function prepareResponseContent(?array $jsonContent, string $message, int $code): ?array
+    {
+        $responseContent = null;
+
+        if(null == $jsonContent)
+        {
+            $responseContent = $this->transformResponseToArray($message, $code);
+        }
+        else{
+            $responseContent = $jsonContent;
+        }
+
+        return $responseContent;
     }
 }

@@ -83,4 +83,14 @@ class Category
     {
         return $this->budgetRequests;
     }
+
+    public function serialize(): array
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s')
+        );
+    }
 }

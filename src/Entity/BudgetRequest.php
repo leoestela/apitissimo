@@ -149,4 +149,18 @@ class BudgetRequest
     {
         $this->updatedAt = new DateTime();
     }
+
+    public function serialize(): array
+    {
+        return array(
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'category' => (null != $this->category) ? $this->category->serialize() : null,
+            'user' => $this->user->serialize(),
+            'status' => $this->status,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s')
+        );
+    }
 }
