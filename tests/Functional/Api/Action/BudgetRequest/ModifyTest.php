@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ModifyTest extends ActionWebTestCase
 {
+    private const ACTION = 'PUT';
     public function setUp()
     {
         parent::setUp();
@@ -24,7 +25,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID),
             $payload
         );
@@ -37,7 +38,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_NEGATIVE_ID),
             $payload
         );
@@ -50,7 +51,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_FLOAT_ID];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID),
             $payload
         );
@@ -63,7 +64,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = [];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -76,7 +77,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_INVALID_ID),
             $payload
         );
@@ -89,7 +90,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::DISCARDED_BUDGET_REQUEST_ID),
             $payload
         );
@@ -102,7 +103,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::TOO_LONG_TEXT];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -115,7 +116,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['description' => null];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -128,7 +129,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['description' => ''];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -141,7 +142,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['description' => DataFixtures::TOO_LONG_TEXT];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -154,7 +155,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['category_id' => DataFixtures::CATEGORY_NON_NUMERIC_ID];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -167,7 +168,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['category_id' => DataFixtures::CATEGORY_NEGATIVE_ID];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -180,7 +181,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['category_id' => DataFixtures::CATEGORY_FLOAT_ID];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );
@@ -193,7 +194,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::DISCARDED_BUDGET_REQUEST_ID),
             $payload
         );
@@ -206,7 +207,7 @@ class ModifyTest extends ActionWebTestCase
         $payload = ['title' => DataFixtures::BUDGET_REQUEST_NEW_TITLE];
 
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestModify(DataFixtures::BUDGET_REQUEST_ID),
             $payload
         );

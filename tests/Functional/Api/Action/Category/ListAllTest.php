@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListAllTest extends ActionWebTestCase
 {
+    private const ACTION = 'GET';
+
+
     public function setUp()
     {
         parent::setUp();
@@ -17,7 +20,7 @@ class ListAllTest extends ActionWebTestCase
 
     public function testListAllGetsAllCategoriesWhenCategoryTableIsEmpty()
     {
-        $response = $this->doRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_CATEGORY_LIST);
 
         $responseData = json_decode($response->getContent(), true);
 
@@ -29,7 +32,7 @@ class ListAllTest extends ActionWebTestCase
     {
         $this->loadFixtures();
 
-        $response = $this->doRequest('GET', EndpointUri::URI_CATEGORY_LIST);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_CATEGORY_LIST);
 
         $responseData = json_decode($response->getContent(), true);
 

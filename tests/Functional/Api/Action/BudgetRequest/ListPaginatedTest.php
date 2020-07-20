@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListPaginatedTest extends ActionWebTestCase
 {
+    private const ACTION = 'GET';
+
+
     public function setUp()
     {
         parent::setUp();
@@ -23,28 +26,23 @@ class ListPaginatedTest extends ActionWebTestCase
 
         $payload = ['email' => DataFixtures::USER_INVALID_EMAIL];
 
-        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
-
-        $responseData = json_decode($response->getContent(), true);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testShouldListAllGetsAllBudgetRequestsWhenBudgetRequestTableIsEmpty()
     {
-        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
-
-        $responseData = json_decode($response->getContent(), true);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST);
 
         $this->assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertNotEmpty($responseData);
     }
 
     public function testShouldListAllGetsAllBudgetRequestsWhenBudgetRequestsLoaded()
     {
         $this->loadFixtures();
 
-        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST);
 
         $responseData = json_decode($response->getContent(), true);
 
@@ -58,7 +56,7 @@ class ListPaginatedTest extends ActionWebTestCase
 
         $payload = ['email' => DataFixtures::USER_EMAIL];
 
-        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $responseData = json_decode($response->getContent(), true);
 
@@ -72,7 +70,7 @@ class ListPaginatedTest extends ActionWebTestCase
 
         $payload = ['email' => DataFixtures::USER_EMAIL, 'limit' => 2, 'offset' => 2];
 
-        $response = $this->doRequest('GET', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $responseData = json_decode($response->getContent(), true);
 

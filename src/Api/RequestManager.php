@@ -45,6 +45,7 @@ class RequestManager
         ?string $defaultValue,
         bool $required = false): ?string
     {
+        //Will load field value or default value passed
         $fieldData = isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : $defaultValue;
 
         if($required && null == $fieldData)
@@ -64,11 +65,12 @@ class RequestManager
      */
     protected function getArrayInArrayData(array $arrayData, string $fieldName, bool $required = false): ?array
     {
+        //Will load array searched or null
         $array = isset($arrayData[$fieldName]) ? $arrayData[$fieldName] : null;
 
         if($required && null == $array)
         {
-            throw new Exception('Required field missing', JsonResponse::HTTP_BAD_REQUEST);
+            throw RequiredFieldMissingException::throwException();
         }
 
         return $array;
@@ -88,6 +90,7 @@ class RequestManager
     {
         $intValue = (null != $valuePassed) ? intval($valuePassed) : null;
 
+        //The value will be valid if is numeric and the conversion from int to string is equal to the original string
         if(null != $valuePassed && (!is_numeric($valuePassed) || $valuePassed != strval($intValue) || $intValue < 0))
         {
             throw InvalidIdFormatException::withValue($valuePassed);
@@ -96,14 +99,17 @@ class RequestManager
         return $intValue;
     }
 
-    protected function transformResponseToArray(string $message, int $code): array
+    protected function formatResponseToJson($responseContent, int $responseCode): JsonResponse
     {
-        return array('message' => $message, 'code' => $code);
-    }
-
-    protected function getJsonResponse(array $responseContent, int $responseCode): JsonResponse
-    {
-        $response = new JsonResponse($responseContent, $responseCode);
+        if(is_array($responseContent))
+        {
+            $responseContentAsArray = $responseContent;
+        }
+        else
+            {
+                $responseContentAsArray = array ('message' => $responseContent, 'code' => $responseCode);
+            }
+        $response = new JsonResponse($responseContentAsArray, $responseCode);
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;

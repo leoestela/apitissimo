@@ -77,7 +77,7 @@ class Create extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+        return $this->formatResponseToJson($responseMessage, $responseCode);
     }
 
     /**

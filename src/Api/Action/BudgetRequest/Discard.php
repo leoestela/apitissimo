@@ -42,6 +42,7 @@ class Discard extends RequestManager
         {
             $this->getRequestInfo($budgetRequestId);
 
+            //Can't discard a discarded budget request
             if($this->budgetRequest->getStatus() == Status::STATUS_DISCARDED)
             {
                 throw BudgetRequestActionNotAllowedException::withAction('Discard');
@@ -61,7 +62,7 @@ class Discard extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+        return $this->formatResponseToJson($responseMessage, $responseCode);
     }
 
     /**

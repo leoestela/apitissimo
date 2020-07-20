@@ -36,7 +36,7 @@ class ListAll extends RequestManager
             $jsonContent = $this->serializeCategoryCollection($categoryCollection);
         }
 
-        return $this->getJsonResponse($jsonContent, JsonResponse::HTTP_OK);
+        return $this->formatResponseToJson($jsonContent, JsonResponse::HTTP_OK);
     }
 
     private function serializeCategoryCollection (array $categoryCollection): array

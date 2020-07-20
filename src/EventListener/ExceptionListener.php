@@ -15,19 +15,20 @@ class ExceptionListener
     {
         $exception = $event->getException();
 
-        $data = [];
-
         if ($exception instanceof HttpExceptionInterface) {
             $data = [
                 'message' => $exception->getMessage(),
                 'code' => $exception->getStatusCode()
             ];
-        } else {
+        }
+        //All other errors will be informed as internal server errors
+        else
+            {
             $data = [
                 'message' => 'Internal server error',
                 'code' => JsonResponse::HTTP_INTERNAL_SERVER_ERROR
             ];
-        }
+            }
 
         $event->setResponse($this->getJsonResponse($data));
     }

@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PublishTest extends ActionWebTestCase
 {
+    private const ACTION = 'PUT';
+
+
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +25,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsNotNumeric()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID)
         );
 
@@ -32,7 +35,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsNegative()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_NEGATIVE_ID)
         );
 
@@ -42,7 +45,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsFloat()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_FLOAT_ID)
         );
 
@@ -52,7 +55,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowBadRequestExceptionIsBudgetRequestNotExists()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_INVALID_ID)
         );
 
@@ -62,7 +65,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowNotAllowedExceptionIsBudgetRequestIsNotPending()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::DISCARDED_BUDGET_REQUEST_ID)
         );
 
@@ -72,7 +75,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowNotAllowedExceptionIfBudgetRequestIfTitleIsNull()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_WITHOUT_TITLE_ID)
         );
 
@@ -82,7 +85,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldThrowNotAllowedExceptionIfBudgetRequestIfCategoryIsNull()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_WITHOUT_CATEGORY_ID)
         );
 
@@ -92,7 +95,7 @@ class PublishTest extends ActionWebTestCase
     public function testShouldPublishBudgetRequestIfRequestIsValid()
     {
         $response = $this->doRequest(
-            'PUT', 
+            self::ACTION, 
             EndpointUri::getUriForBudgetRequestPublish(DataFixtures::BUDGET_REQUEST_ID)
         );
 

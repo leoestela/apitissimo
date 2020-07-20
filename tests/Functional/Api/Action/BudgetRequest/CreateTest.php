@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CreateTest extends ActionWebTestCase
 {
+    private const ACTION = 'POST';
+    
+    
     public function setUp()
     {
         parent::setUp();
@@ -32,7 +35,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -49,7 +52,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -67,7 +70,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -85,7 +88,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -103,7 +106,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -121,7 +124,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -139,7 +142,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -157,7 +160,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -170,7 +173,7 @@ class CreateTest extends ActionWebTestCase
             'category_id' => DataFixtures::CATEGORY_ID
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -184,7 +187,7 @@ class CreateTest extends ActionWebTestCase
             'user_data' => []
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -198,7 +201,7 @@ class CreateTest extends ActionWebTestCase
             'user_data' => null
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -212,7 +215,7 @@ class CreateTest extends ActionWebTestCase
             'user_data' => ''
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -229,7 +232,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -247,7 +250,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -265,7 +268,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -283,7 +286,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -301,7 +304,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -318,7 +321,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -336,7 +339,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -354,7 +357,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -372,7 +375,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -390,7 +393,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -408,7 +411,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -426,7 +429,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -443,7 +446,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -461,7 +464,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -479,7 +482,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -497,7 +500,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -514,7 +517,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
     }
@@ -532,7 +535,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
     }
@@ -550,7 +553,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
 
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
     }
@@ -568,7 +571,7 @@ class CreateTest extends ActionWebTestCase
             ]
         ];
         
-        $response = $this->doRequest('POST', EndpointUri::URI_BUDGET_REQUEST, $payload);
+        $response = $this->doRequest(self::ACTION, EndpointUri::URI_BUDGET_REQUEST, $payload);
 
         $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
     }

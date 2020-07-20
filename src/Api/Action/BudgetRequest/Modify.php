@@ -57,6 +57,7 @@ class Modify extends RequestManager
         {
             $this->getRequestInfo($budgetRequestId, $request);
 
+            //Can modify pending budget requests only
             if($this->budgetRequest->getStatus() != Status::STATUS_PENDING)
             {
                 throw BudgetRequestActionNotAllowedException::withAction('Modify');
@@ -76,7 +77,7 @@ class Modify extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+        return $this->formatResponseToJson($responseMessage, $responseCode);
     }
 
     /**

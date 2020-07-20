@@ -13,6 +13,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class DataFixtures implements FixtureInterface
 {
+    //Constants will be used as fake data here and for functional and unit tests
     public const USER_ID = 1;
     public const USER_EMAIL = 'user@mail.com';
     public const USER_INVALID_EMAIL = 'user@';

@@ -6,6 +6,7 @@ namespace App\Message;
 
 class Message
 {
+    //Will be used in constraint asserts messages or in response messages
     public const USER_INVALID_EMAIL = 'Email {{ value }} is not valid';
     public const USER_EMAIL_MAX_LENGTH = 'User email cannot be longer than {{ limit }} digits';
     public const USER_PHONE_MAX_LENGTH = 'User phone number cannot be longer than {{ limit }} digits';

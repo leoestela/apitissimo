@@ -17,7 +17,6 @@ class ModifyBudgetRequestTestCase extends ActualizeBudgetRequestTestCase
         parent::setUp();
     }
 
-
     protected function createFakeBudgetRequest(?string $budgetRequestTitle, ?string $categoryName): BudgetRequest
     {
         $user = new User(

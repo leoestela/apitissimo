@@ -85,10 +85,7 @@ class BudgetRequestService extends ValidationService
         ?int $categoryId,
         string $status): BudgetRequest
     {
-        $this->requiredFieldInformed($description);
-        $this->requiredFieldInformed($status);
-
-        if($this->sameBudgetRequestInfo($budgetRequest, $title, $description, $categoryId, $status))
+        if($this->sameBudgetRequestData($budgetRequest, $title, $description, $categoryId, $status))
         {
             throw BudgetRequestNoChangesPassedException::throwException();
         }
@@ -141,7 +138,7 @@ class BudgetRequestService extends ValidationService
         $entityManager->flush();
     }
 
-    private function sameBudgetRequestInfo(
+    private function sameBudgetRequestData(
         BudgetRequest $actualBudgetRequest,
         ?string $title,
         string $description,

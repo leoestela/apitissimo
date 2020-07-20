@@ -57,6 +57,7 @@ class ListPaginated extends RequestManager
         {
             $this->getRequestInfo($request);
 
+            //Find all or find by user
             $criteria = (null != $this->user) ? ['user' => $this->user->getId()] : [];
 
             $budgetRepositoryCollection =
@@ -73,9 +74,10 @@ class ListPaginated extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        $responseContent = $this->prepareResponseContent($jsonContent, $responseMessage, $responseCode);
+        //Response can be a list of budget request or an error message
+        $responseContent = (null == $responseMessage) ? $jsonContent : $responseMessage;
 
-        return $this->getJsonResponse($responseContent, $responseCode);
+        return $this->formatResponseToJson($responseContent, $responseCode);
     }
 
     /**
@@ -128,20 +130,5 @@ class ListPaginated extends RequestManager
         }
 
         return $data;
-    }
-
-    private function prepareResponseContent(?array $jsonContent, string $message, int $code): ?array
-    {
-        $responseContent = null;
-
-        if(null == $jsonContent)
-        {
-            $responseContent = $this->transformResponseToArray($message, $code);
-        }
-        else{
-            $responseContent = $jsonContent;
-        }
-
-        return $responseContent;
     }
 }

@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DiscardTest extends ActionWebTestCase
 {
+    private const ACTION = 'PUT';
+
+
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +25,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsNotNumeric()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_NON_NUMERIC_ID)
         );
 
@@ -32,7 +35,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsNegative()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_NEGATIVE_ID)
         );
 
@@ -42,7 +45,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldThrowExceptionIfBudgetRequestIdIsFloat()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_FLOAT_ID)
         );
 
@@ -52,7 +55,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldThrowBadRequestExceptionIfBudgetRequestNotExists()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_INVALID_ID)
         );
 
@@ -62,7 +65,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldThrowNotAllowedExceptionIfBudgetRequestIsDiscarded()
     {
         $response = $this->doRequest(
-            'PUT',
+            self::ACTION,
             EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::DISCARDED_BUDGET_REQUEST_ID)
         );
 
@@ -72,7 +75,7 @@ class DiscardTest extends ActionWebTestCase
     public function testShouldDiscardBudgetRequestIfRequestIsValid()
     {
         $response =
-            $this->doRequest('PUT', EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_ID));
+            $this->doRequest(self::ACTION, EndpointUri::getUriForBudgetRequestDiscard(DataFixtures::BUDGET_REQUEST_ID));
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
     }

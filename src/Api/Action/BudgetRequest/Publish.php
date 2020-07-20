@@ -40,6 +40,7 @@ class Publish extends RequestManager
         {
             $this->getRequestInfo($budgetRequestId);
 
+            //Can publish budget requests pending and with title and category informed only
             if($this->budgetRequest->getStatus() != Status::STATUS_PENDING ||
                 null == $this->budgetRequest->getTitle() ||
                 null == $this->budgetRequest->getCategory()
@@ -64,7 +65,7 @@ class Publish extends RequestManager
             $responseCode = $exception->getCode();
         }
 
-        return $this->getJsonResponse($this->transformResponseToArray($responseMessage, $responseCode), $responseCode);
+        return $this->formatResponseToJson($responseMessage, $responseCode);
     }
 
     /**

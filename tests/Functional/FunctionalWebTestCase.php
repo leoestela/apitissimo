@@ -26,13 +26,7 @@ class FunctionalWebTestCase extends WebTestCase
     {
         parent::setUp();
 
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        static::$container = $kernel->getContainer();
-
-        /** @var  EntityManagerInterface */
-        $entityManager = static::$container->get('doctrine')->getManager();
+        $entityManager = $this->getConnection();
 
         $purger = new ORMPurger();
 
@@ -59,5 +53,15 @@ class FunctionalWebTestCase extends WebTestCase
     public function purge()
     {
         $this->executor->purge();
+    }
+
+    private function getConnection(): EntityManagerInterface
+    {
+        $kernel = static::createKernel();
+        $kernel->boot();
+
+        static::$container = $kernel->getContainer();
+
+        return static::$container->get('doctrine')->getManager();
     }
 }
